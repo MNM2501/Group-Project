@@ -16,6 +16,7 @@ GameObject::GameObject(glm::vec3 &entityPosition, GLuint entityTexture, GLint en
 void GameObject::update(double deltaTime) {
 
 	// Update object position with Euler integration
+	int x = 5;
 	position += velocity * (float)deltaTime;
 }
 
