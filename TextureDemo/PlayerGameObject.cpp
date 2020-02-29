@@ -8,7 +8,9 @@
 */
 
 PlayerGameObject::PlayerGameObject(glm::vec3 &entityPos, GLuint entityTexture, GLint entityNumElements)
-	: GameObject(entityPos, entityTexture, entityNumElements) {}
+	: GameObject(entityPos, entityTexture, entityNumElements) {
+	speed = 3;
+}
 
 // Update function for moving the player object around
 void PlayerGameObject::update(double deltaTime) {

@@ -18,7 +18,6 @@ public:
 	// Renders the GameObject using a shader
 	void render(Shader &shader);
 
-
 	// Getters
 	inline glm::vec3& getPosition() { return position; }
 	inline glm::vec3& getVelocity() { return velocity; }
@@ -31,6 +30,8 @@ protected:
 	// TODO: Add more transformation variables
 	glm::vec3 position;
 	glm::vec3 velocity;
+	int flip;
+	float speed;
 
 	// Object's details
 	GLint numElements;

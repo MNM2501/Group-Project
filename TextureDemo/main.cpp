@@ -14,6 +14,7 @@
 #include "Shader.h"
 #include "Window.h"
 #include "PlayerGameObject.h"
+#include "UIElement.h"
 
 // Macro for printing exceptions
 #define PrintException(exception_object)\
@@ -21,15 +22,18 @@
 
 // Globals that define the OpenGL window and viewport
 const std::string window_title_g = "Transform Demo";
-const unsigned int window_width_g = 800;
-const unsigned int window_height_g = 600;
-const glm::vec3 viewport_background_color_g(0.0, 0.0, 1.0);
+const unsigned int window_width_g = 1600;
+const unsigned int window_height_g = 1200;
+const glm::vec3 viewport_background_color_g(0.0, 0.0, 1);
 
 // Global texture info
 GLuint tex[3];
 
 // Global game object info
 std::vector<GameObject*> gameObjects;
+
+//global background Object
+UIElement* background;
 
 
 // Create the geometry for a square (with two triangles)
@@ -95,9 +99,9 @@ void setallTexture(void)
 {
 //	tex = new GLuint[4];
 	glGenTextures(3, tex);
-	setthisTexture(tex[0], "orb.png");
-	setthisTexture(tex[1], "saw.png");
-	setthisTexture(tex[2], "rock.png");
+	setthisTexture(tex[0], "Ship.png");
+	setthisTexture(tex[1], "backgroundScaled.png");
+	setthisTexture(tex[2], "parrot.png");
 
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 }
@@ -124,32 +128,42 @@ void setup(void)
 	// Note, player object should always be the first object in the game object vector 
 	gameObjects.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), tex[0], size));
 
-	// Setup other objects
-	gameObjects.push_back(new GameObject(glm::vec3(-1.0f, 1.0f, 0.0f), tex[1], size));
-	gameObjects.push_back(new GameObject(glm::vec3(1.0f, -0.5f, 0.0f), tex[2], size));
-
-
+	// Setup background
+	background = new UIElement(glm::vec3(0, 0, 1), tex[1], size);
+	background->setScale(glm::vec3(8, 8, 1));
+	
 }
 
 void controls(void)
 {
 	GameObject *player = gameObjects[0];
 	glm::vec3 curpos = player->getPosition();
+
+	bool buttonPressed = (glfwGetKey(Window::getWindow(), GLFW_KEY_W) == GLFW_PRESS) ||
+		(glfwGetKey(Window::getWindow(), GLFW_KEY_A) == GLFW_PRESS) ||
+		(glfwGetKey(Window::getWindow(), GLFW_KEY_S) == GLFW_PRESS) ||
+		(glfwGetKey(Window::getWindow(), GLFW_KEY_D) == GLFW_PRESS);
+	
+
 	// Checking for player input and making changes accordingly
 	if (glfwGetKey(Window::getWindow(), GLFW_KEY_W) == GLFW_PRESS) {
-		player->setPosition(curpos + glm::vec3(0, 0.001, 0));
+		player->setVelocity(glm::vec3(0, 1, 0));
 	}
 	if (glfwGetKey(Window::getWindow(), GLFW_KEY_S) == GLFW_PRESS) {
-		player->setPosition(curpos + glm::vec3(0, -0.001, 0));
+		player->setVelocity(glm::vec3(0, -1, 0));
 
 	}
 	if (glfwGetKey(Window::getWindow(), GLFW_KEY_D) == GLFW_PRESS) {
-		player->setPosition(curpos + glm::vec3(0.001, 0, 0));
+		player->setVelocity(glm::vec3(1, 0, 0));
 
 	}
 	if (glfwGetKey(Window::getWindow(), GLFW_KEY_A) == GLFW_PRESS) {
-		player->setPosition(curpos + glm::vec3(-0.001, 0, 0));
+		player->setVelocity(glm::vec3(-1, 0, 0));
 
+	}
+	if(!buttonPressed)
+	{
+		player->setVelocity(glm::vec3(0, 0, 0));
 	}
 }
 
@@ -165,6 +179,9 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 
 	// apply user input
 	controls();
+
+	//render background
+	background->render(shader);
 
 	// Update and render all game objects
 	for (int i = 0; i < gameObjects.size(); i++) {
