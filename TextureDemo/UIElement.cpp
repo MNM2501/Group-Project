@@ -11,6 +11,8 @@ void UIElement::render(Shader &shader)
 {
 	// Bind the entities texture
 	glBindTexture(GL_TEXTURE_2D, texture);
+	glm::mat4 UIMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.25, 0.25, 0.25));
+	shader.setUniformMat4("viewMatrix", UIMatrix);
 
 	// Setup the transformation matrix for the shader
 	// TODO: Add different types of transformations

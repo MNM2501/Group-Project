@@ -15,6 +15,8 @@
 #include "Window.h"
 #include "PlayerGameObject.h"
 #include "UIElement.h"
+#include "Terrain.h"
+
 
 // Macro for printing exceptions
 #define PrintException(exception_object)\
@@ -26,6 +28,9 @@ const unsigned int window_width_g = 1600;
 const unsigned int window_height_g = 1200;
 const glm::vec3 viewport_background_color_g(0.0, 0.0, 1);
 
+//Global player object
+PlayerGameObject* player;
+
 // Global texture info
 GLuint tex[3];
 
@@ -34,6 +39,9 @@ std::vector<GameObject*> gameObjects;
 
 //global background Object
 UIElement* background;
+
+//Terrain Object
+Terrain* terrain;
 
 
 // Create the geometry for a square (with two triangles)
@@ -126,12 +134,31 @@ void setup(void)
 
 	// Setup the player object (position, texture, vertex count)
 	// Note, player object should always be the first object in the game object vector 
-	gameObjects.push_back(new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), tex[0], size));
+	player = new PlayerGameObject(glm::vec3(0.0f, 0.0f, 0.0f), tex[0], size);
+	gameObjects.push_back(player);
+
+	gameObjects.push_back(new GameObject(glm::vec3(1.0, 0.0, 0.0), tex[2], size));
 
 	// Setup background
 	background = new UIElement(glm::vec3(0, 0, 1), tex[1], size);
 	background->setScale(glm::vec3(8, 8, 1));
 	
+	//setup terrain
+	int level[12][30] = {
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,2,2,1,1,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,1,1,0,0,1,1,1},
+	{0,0,0,0,2,2,0,0,0,1,1,1,1,1,1,0,0,2,2,2,2,0,0,2,2,1,1,2,2,2},
+	{1,1,1,1,2,2,1,1,1,2,2,2,2,2,2,1,1,2,2,2,2,1,1,2,2,2,2,2,2,2},
+	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
+	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}
+	};
+
 }
 
 void controls(void)
@@ -174,14 +201,15 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 
 	// set view to zoom out, centred by default at 0,0
 	float cameraZoom = 0.25f;
-	glm::mat4 viewMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(cameraZoom, cameraZoom, cameraZoom));
+	glm::mat4 centerPlayer = glm::translate(glm::mat4(1.0f), glm::vec3(-player->getPosition().x, -player->getPosition().y, 0));
+	glm::mat4 viewMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(cameraZoom, cameraZoom, cameraZoom)) * centerPlayer;
 	shader.setUniformMat4("viewMatrix", viewMatrix);
 
 	// apply user input
 	controls();
 
-	//render background
-	background->render(shader);
+	//draw terrain
+	terrain->render(shader);
 
 	// Update and render all game objects
 	for (int i = 0; i < gameObjects.size(); i++) {
@@ -205,6 +233,9 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 		// Render game objects
 		currentGameObject->render(shader);
 	}
+
+	//render background
+	background->render(shader);
 
 	// Update other events like input handling
 	glfwPollEvents();
