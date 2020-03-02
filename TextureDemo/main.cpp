@@ -32,13 +32,14 @@ const glm::vec3 viewport_background_color_g(0.0, 0.0, 1);
 PlayerGameObject* player;
 
 // Global texture info
-GLuint tex[3];
+GLuint tex[6];
 
 // Global game object info
 std::vector<GameObject*> gameObjects;
 
 //global background Object
 UIElement* background;
+UIElement* mmBackground; 
 
 //Terrain Object
 Terrain* terrain;
@@ -106,11 +107,13 @@ void setthisTexture(GLuint w, char *fname)
 void setallTexture(void)
 {
 //	tex = new GLuint[4];
-	glGenTextures(3, tex);
+	glGenTextures(6, tex);
 	setthisTexture(tex[0], "Ship.png");
 	setthisTexture(tex[1], "backgroundScaled.png");
 	setthisTexture(tex[2], "parrot.png");
-
+	setthisTexture(tex[3], "mmBackground.png");
+	setthisTexture(tex[4], "playbutton.png");
+	setthisTexture(tex[5], "playbutton2.png");
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 }
 
@@ -142,6 +145,12 @@ void setup(void)
 	// Setup background
 	background = new UIElement(glm::vec3(0, 0, 1), tex[1], size);
 	background->setScale(glm::vec3(8, 8, 1));
+
+	// Setup MainMenu background
+	mmBackground = new UIElement(glm::vec3(0, 0, 1), tex[3], size);
+	mmBackground->setScale(glm::vec3(8, 8, 1));
+
+	
 	
 	//setup terrain
 	int level[12][30] = {
@@ -194,13 +203,45 @@ void controls(void)
 	}
 }
 
+void mainmenu(Window &window, Shader &shader) {
+	bool clicked = false;
+	while (clicked == false) {
+		window.clear(viewport_background_color_g);
+
+		double xpos, ypos;
+		glfwGetCursorPos(Window::getWindow(), &xpos, &ypos);
+
+
+		UIElement* startButton = new UIElement(glm::vec3(-2, 0, 1), tex[4], 6);
+		startButton->setScale(glm::vec3(2.0, 1.5, 1));
+		UIElement* startButton2 = new UIElement(glm::vec3(-2, 0, 1), tex[5], 6);
+		startButton2->setScale(glm::vec3(2.0, 1.5, 1));
+
+		if (xpos > 300 && xpos < 500 && ypos > 535 && ypos < 665) {
+			startButton2->render(shader);
+			if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+				std::cout << "YESSS" << std::endl;
+				clicked = true;
+			}
+		}
+
+
+		startButton->render(shader);
+		mmBackground->render(shader);
+
+		glfwPollEvents();
+		glfwSwapBuffers(window.getWindow());
+	}
+	
+}
+
 void gameLoop(Window &window, Shader &shader, double deltaTime)
 {
 	// Clear background
 	window.clear(viewport_background_color_g);
 
 	// set view to zoom out, centred by default at 0,0
-	float cameraZoom = 0.25f;
+	float cameraZoom = 0.2f;
 	glm::mat4 centerPlayer = glm::translate(glm::mat4(1.0f), glm::vec3(-player->getPosition().x, -player->getPosition().y, 0));
 	glm::mat4 viewMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(cameraZoom, cameraZoom, cameraZoom)) * centerPlayer;
 	shader.setUniformMat4("viewMatrix", viewMatrix);
@@ -254,6 +295,8 @@ int main(void){
 		shader.enable();
 
 		setup();
+		mainmenu(window, shader);
+	
 
 		// Run the main loop
 		double lastTime = glfwGetTime();
