@@ -1,20 +1,24 @@
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\vc141.pdb
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\vc141.idb
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\agent.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\main.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\window.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\shader.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\resourcemanager.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\player.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\gameentity.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\enemy.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\bullet.obj
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\background.obj
-c:\users\brady\downloads\demo\demo\texturedemo\debug\texturedemo.exe
-c:\users\brady\downloads\demo\demo\texturedemo\debug\texturedemo.pdb
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\texturedemo.tlog\cl.command.1.tlog
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\texturedemo.tlog\cl.read.1.tlog
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\texturedemo.tlog\cl.write.1.tlog
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\texturedemo.tlog\link.command.1.tlog
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\texturedemo.tlog\link.read.1.tlog
-c:\users\brady\downloads\demo\demo\texturedemo\texturedemo\debug\texturedemo.tlog\link.write.1.tlog
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\vc141.pdb
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\vc141.idb
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\window.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\shader.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\fileutils.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\main.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\gameobject.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\playergameobject.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\uielement.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\terrain.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\world.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\debug\texturedemo.exe
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\debug\texturedemo.pdb
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\agent.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\gameentity.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\playercontrolledagent.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\playercontrolledobject.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\resourcemanager.obj
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\texturedemo.tlog\cl.command.1.tlog
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\texturedemo.tlog\cl.read.1.tlog
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\texturedemo.tlog\cl.write.1.tlog
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\texturedemo.tlog\link.command.1.tlog
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\texturedemo.tlog\link.read.1.tlog
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\debug\texturedemo.tlog\link.write.1.tlog

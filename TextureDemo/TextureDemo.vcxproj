@@ -151,6 +151,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BulletGameObject.cpp" />
+    <ClCompile Include="EnemyGameObject.cpp" />
     <ClCompile Include="PlayerGameObject.cpp" />
     <ClCompile Include="GameObject.cpp" />
     <ClCompile Include="main.cpp" />
@@ -161,6 +163,8 @@
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="BulletGameObject.h" />
+    <ClInclude Include="EnemyGameObject.h" />
     <ClInclude Include="PlayerGameObject.h" />
     <ClInclude Include="GameObject.h" />
     <ClInclude Include="FileUtils.h" />

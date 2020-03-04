@@ -191,6 +191,7 @@ void setup(void)
 	}
 
 	world = new World(12, 30, grid, tileTextures, size);
+	world->setBoundaries(-1, 30, 6, 1);
 
 }
 
