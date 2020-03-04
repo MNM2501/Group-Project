@@ -21,7 +21,7 @@ public:
 	// Getters
 	inline glm::vec3& getPosition() { return position; }
 	inline glm::vec3& getVelocity() { return velocity; }
-
+	inline int getxDirect() { return xDirection; }
 	// Setters
 	inline void setPosition(glm::vec3& newPosition) { position = newPosition; }
 	inline void setVelocity(glm::vec3& newVelocity) { velocity = newVelocity; }
@@ -31,7 +31,8 @@ protected:
 	// TODO: Add more transformation variables
 	glm::vec3 position;
 	glm::vec3 velocity;
-	int direction;
+	int xDirection;
+	int yDirection;
 	float speed;
 	float size;
 

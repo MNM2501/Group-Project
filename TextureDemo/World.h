@@ -18,7 +18,7 @@ public:
 	static void render(Shader&);
 
 	//check for collison
-	static bool checkForCollision(glm::vec3);
+	static bool checkForCollision(glm::vec3, glm::vec3, int);
 
 	//boundary detection
 	static bool boundaryDetection(glm::vec3);

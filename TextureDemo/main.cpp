@@ -16,6 +16,8 @@
 #include "PlayerGameObject.h"
 #include "UIElement.h"
 #include "World.h"
+#include "EnemyGameObject.h"
+#include "BulletGameObject.h"
 
 
 // Macro for printing exceptions
@@ -28,14 +30,18 @@ const unsigned int window_width_g = 1600;
 const unsigned int window_height_g = 1200;
 const glm::vec3 viewport_background_color_g(0.0, 0.0, 1);
 
-//Global player object
+//Global  object variables
 PlayerGameObject* player;
+GameObject* bomb;
 
 // Global texture info
-GLuint tex[7];
+const int texSize = 10;
+GLuint tex[texSize];
 
 // Global game object info
 std::vector<GameObject*> gameObjects;
+std::vector<EnemyGameObject*> enemies;
+std::vector<BulletGameObject*> bullets;
 
 //global background Object
 UIElement* background;
@@ -110,7 +116,7 @@ void setthisTexture(GLuint w, char *fname)
 void setallTexture(void)
 {
 //	tex = new GLuint[4];
-	glGenTextures(7, tex);
+	glGenTextures(texSize, tex);
 	setthisTexture(tex[0], "Ship.png");
 	setthisTexture(tex[1], "backgroundScaled.png");
 	setthisTexture(tex[2], "grassTile.png");
@@ -118,6 +124,11 @@ void setallTexture(void)
 	setthisTexture(tex[4], "mmBackground.png");
 	setthisTexture(tex[5], "playbutton.png");
 	setthisTexture(tex[6], "playbutton2.png");
+	setthisTexture(tex[7], "helo.png");
+	setthisTexture(tex[8], "kami.png");
+	setthisTexture(tex[9], "clash2.png");
+	setthisTexture(tex[9], "alienbomb.png");
+
 
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 }
@@ -142,8 +153,12 @@ void setup(void)
 
 	// Setup the player object (position, texture, vertex count)
 	// Note, player object should always be the first object in the game object vector 
-	player = new PlayerGameObject(glm::vec3(0.0f, 1.0f, 0.0f), tex[0], size);
+	player = new PlayerGameObject(glm::vec3(1.0f, 1.0f, 0.0f), tex[0], size);
 	gameObjects.push_back(player);
+
+	//setup alien bomb
+	bomb = new GameObject(glm::vec3(29, 3, 0), tex[9], size);
+	gameObjects.push_back(bomb);
 
 	// Setup background
 	background = new UIElement(glm::vec3(0, 0, 2), tex[1], size);
@@ -189,15 +204,21 @@ void setup(void)
 			grid[i][j] = info[i][j];
 		}
 	}
-
+	
+	//Setup our world
 	world = new World(12, 30, grid, tileTextures, size);
-	world->setBoundaries(-1, 30, 6, 1);
+	world->setBoundaries(-1, 30, 6, -10);
+
+	//Setup enemies
+	enemies.push_back(new EnemyGameObject(glm::vec3(8.0f, 3.0f, 0.0f), tex[7], size, 1.2, 3, 1));
+	enemies.push_back(new EnemyGameObject(glm::vec3(10.0f, 3.0f, 0.0f), tex[7], size, 1.2, 3, 1));
+	enemies.push_back(new EnemyGameObject(glm::vec3(13.0f, 3.0f, 0.0f), tex[7], size, 1.2, 3, 1));
+	enemies.push_back(new EnemyGameObject(glm::vec3(22.0f, 3.0f, 0.0f), tex[8], size, 1.2, 3, 1));
 
 }
 
 void controls(void)
 {
-	GameObject *player = gameObjects[0];
 	glm::vec3 curpos = player->getPosition();
 
 	bool buttonPressed = (glfwGetKey(Window::getWindow(), GLFW_KEY_W) == GLFW_PRESS) ||
@@ -222,9 +243,52 @@ void controls(void)
 		player->setVelocity(glm::vec3(-1, 0, 0));
 
 	}
+
+	if (glfwGetKey(Window::getWindow(), GLFW_KEY_F) == GLFW_PRESS) {
+		if (player->getDownTime() <= 0) {
+			BulletGameObject* bullet = new BulletGameObject(player->getPosition(), tex[9], 6, 10, 270, 30);
+			if (player->getxDirect() == 1) {
+				bullet->setVelocity(glm::vec3(bullet->getSpeed(), 0, 0));
+			}
+			else {
+				bullet->setVelocity(glm::vec3(bullet->getSpeed() * -1, 0, 0));
+				bullet->setAngle(90);
+			}
+			bullets.push_back(bullet);
+			player->resetDownTime();
+		}
+
+	}
+
 	if(!buttonPressed)
 	{
 		player->setVelocity(glm::vec3(0, 0, 0));
+	}
+}
+
+//removes bullets from our vector of bullets
+// specify indices
+void removeBullets(std::vector<int> indices) {
+	int m = indices.size();
+	int num;
+
+	for (int i = 0; i < m; i++) {
+		num = indices.back();
+		indices.pop_back();
+		bullets.erase(bullets.begin() + num);
+	}
+}
+
+//removes enemies from our vector of enemy objects
+//specify indices
+void removeEnemies(std::vector<int> indices) {
+	int m = indices.size();
+	int num;
+
+	for (int i = 0; i < m; i++) {
+		num = indices.back();
+		indices.pop_back();
+		enemies.erase(enemies.begin() + num);
 	}
 }
 
@@ -281,9 +345,10 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 	world->render(shader);
 
 	// Update and render all game objects
-	printf(" size : %d\n", gameObjects.size());
+	//printf(" size : %d\n", gameObjects.size());
 	for (int i = 0; i < gameObjects.size(); i++) {
-		printf(" i  : %d\n", i);
+		//
+		//printf(" i  : %d\n", i);
 		// Get the current object
 		GameObject* currentGameObject = gameObjects[i];
 
@@ -302,9 +367,101 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 		}
 
 		// Render game objects
+		currentGameObject->render(shader);
+	}
+
+		
+	//check bullet collision
+	for (int i = 0; i < bullets.size(); i++) {
+		BulletGameObject* currentGameObject = bullets[i];
+		for (int n = 0; n < enemies.size(); n++) {
+			EnemyGameObject* nextGameObject = enemies[n];
+			if (nextGameObject->isDead() == false) {
+				float Xd = nextGameObject->getPosition().x - currentGameObject->getPosition().x;
+				Xd = Xd * Xd;
+				float Yd = nextGameObject->getPosition().y - currentGameObject->getPosition().y;
+				Yd = Yd * Yd;
+				float distance = sqrt(Xd + Yd);
+
+				if (distance <= (nextGameObject->getHitBox() + currentGameObject->getHitBox())) {
+					nextGameObject->setDead(true);
+					currentGameObject->setDead(true);
+
+				}
+			}
+		}
+
+		//check if collided with bomb
+		float Xd = bomb->getPosition().x - currentGameObject->getPosition().x;
+		Xd = Xd * Xd;
+		float Yd = bomb->getPosition().y - currentGameObject->getPosition().y;
+		Yd = Yd * Yd;
+		float distance = sqrt(Xd + Yd);
+
+		if (distance <= 0.5) {
+
+			currentGameObject->setDead(true);
+			glfwSetWindowShouldClose(window.getWindow(), 1);
+
+		}
+
+	}
+
+	//render enemies
+	for (int i = 0; i < enemies.size(); i++) {
+		//printf(" i  : %d\n", i);
+		// Get the current object
+		EnemyGameObject* currentGameObject = enemies[i];
+
+		// Update game objects
+		currentGameObject->update(deltaTime);
+
+		// Render game objects
 		std::cout << currentGameObject->getPosition().y << std::endl;
 		currentGameObject->render(shader);
 	}
+
+	//render bullets
+	for (int i = 0; i < bullets.size(); i++) {
+		//printf(" i  : %d\n", i);
+		// Get the current object
+		BulletGameObject* currentGameObject = bullets[i];
+
+		// Update game objects
+		currentGameObject->update(deltaTime);
+
+		// Render game objects
+		std::cout << currentGameObject->getPosition().y << std::endl;
+		currentGameObject->render(shader);
+		currentGameObject->decreaseLifeSpan();
+	}
+
+	//
+	std::vector<int> theDeadOnes;
+	for (int i = 0; i < bullets.size(); i++) {
+		BulletGameObject* currentGameObject = bullets[i];
+		if (currentGameObject->isDead()) {
+			theDeadOnes.push_back(i);
+		}
+	}
+	removeBullets(theDeadOnes);
+	theDeadOnes.clear();
+
+	for (int i = 0; i < enemies.size(); i++) {
+		EnemyGameObject* currentGameObject = enemies[i];
+		if (currentGameObject->isDead()) {
+			theDeadOnes.push_back(i);
+		}
+	}
+	removeEnemies(theDeadOnes);
+	theDeadOnes.clear();
+
+
+	//render background
+	if (player->getDownTime() > 0) {
+		player->decreaseDownTime();
+	}
+
 
 	//render background
 	background->render(shader);
@@ -327,6 +484,7 @@ int main(void){
 
 		setup();
 		mainmenu(window, shader);
+
 
 		// Run the main loop
 		double lastTime = glfwGetTime();
