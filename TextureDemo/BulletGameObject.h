@@ -4,7 +4,7 @@ class BulletGameObject :
 	public GameObject
 {
 	public:
-		BulletGameObject(glm::vec3& entityPos, GLuint entityTexture, GLint entityNumElements, float theSpeed,float theAngle, int life);
+		BulletGameObject(glm::vec3& entityPos, GLuint entityTexture, GLint entityNumElements, float theSpeed,float theAngle);
 
 		// Update function for moving the player object around
 		virtual void update(double deltaTime) override;
@@ -13,7 +13,7 @@ class BulletGameObject :
 		//setters
 		void setSpeed(float newSpeed) { speed = newSpeed; }
 		void setAngle(float newAngle) { angle = newAngle; }
-		void decreaseLifeSpan();
+		void decreaseLifeSpan() { lifeSpan -= 1; }
 		void setDead(bool flatline) { dead = flatline; }
 
 		//getters

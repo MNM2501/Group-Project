@@ -11,7 +11,6 @@ PlayerGameObject::PlayerGameObject(glm::vec3 &entityPos, GLuint entityTexture, G
 	: GameObject(entityPos, entityTexture, entityNumElements) {
 	speed = 3;
 	gridValue = 100;
-	downTime = 0;
 }
 
 // Update function for moving the player object around

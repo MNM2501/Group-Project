@@ -14,14 +14,15 @@ EnemyGameObject::EnemyGameObject(glm::vec3& entityPos, GLuint entityTexture, GLi
 	attackPow = ap;
 	recharge = 600;
 	maxRecharge = 600;
-	dead = false;
-	hitBox = 0.5;
 }
 
 // Update function for moving the player object around
 void EnemyGameObject::update(double deltaTime) {
-	// Update object position with Euler integration
-	position += velocity * (float)deltaTime;
+
+	// special player updates go here
+
+	// Call the parent's update method to move the object in standard way, if desired
+	GameObject::update(deltaTime);
 }
 
 void EnemyGameObject::render(Shader& shader) {

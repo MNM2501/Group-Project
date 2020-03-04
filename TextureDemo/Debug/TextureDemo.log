@@ -1,55 +1,46 @@
-﻿  EnemyGameObject.cpp
-  main.cpp
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(201,90): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(202,94): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(203,94): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(204,94): warning C4305: 'argument': truncation from 'double' to 'float'
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(329,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(339,25): warning C4018: '<': signed/unsigned mismatch
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(352,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(354,21): warning C4018: '<': signed/unsigned mismatch
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(374,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(388,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(402,20): warning C4018: '<': signed/unsigned mismatch
-C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\TextureDemo\main.cpp(411,20): warning C4018: '<': signed/unsigned mismatch
-  Generating Code...
+﻿  World.cpp
+c:\users\nouzo\desktop\life\carleton\comp2501\groupproject\getting started\getting started\demo\texturedemo\texturedemo\world.cpp(133): warning C4244: 'initializing': conversion from 'T' to 'int', possible loss of data
+          with
+          [
+              T=float
+          ]
   SOIL.lib(SOIL.obj) : MSIL .netmodule or module compiled with /GL found; restarting link with /LTCG; add /LTCG to the link command line to improve linker performance
 LINK : warning LNK4075: ignoring '/INCREMENTAL' due to '/LTCG' specification
 LINK : warning LNK4098: defaultlib 'LIBCMT' conflicts with use of other libs; use /NODEFAULTLIB:library
 LINK : warning LNK4098: defaultlib 'MSVCRT' conflicts with use of other libs; use /NODEFAULTLIB:library
   Generating code
   Finished generating code
-LINK : warning LNK4286: symbol '___glewBindBuffer' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewBufferData' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewGenBuffers' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewAttachShader' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewCompileShader' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewCreateProgram' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewCreateShader' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewDeleteProgram' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewDeleteShader' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewEnableVertexAttribArray' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewGetAttribLocation' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewGetProgramiv' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewGetShaderInfoLog' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewGetShaderiv' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewGetUniformLocation' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewLinkProgram' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewShaderSource' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewUniform1f' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewUniform1i' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewUniform2f' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewUniform3f' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewUniform4f' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewUniformMatrix4fv' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewUseProgram' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '___glewVertexAttribPointer' defined in 'glew32s.lib(glew.obj)' is imported by 'Shader.obj'
-LINK : warning LNK4286: symbol '_glewInit@0' defined in 'glew32s.lib(glew.obj)' is imported by 'Window.obj'
-LINK : warning LNK4286: symbol '_glewGetErrorString@4' defined in 'glew32s.lib(glew.obj)' is imported by 'Window.obj'
-LINK : warning LNK4286: symbol '_glewExperimental' defined in 'glew32s.lib(glew.obj)' is imported by 'Window.obj'
-SOIL.lib(SOIL.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(SOIL.obj)' or at 'C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
-SOIL.lib(image_helper.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(image_helper.obj)' or at 'C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
-SOIL.lib(stb_image_aug.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(stb_image_aug.obj)' or at 'C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
-SOIL.lib(image_DXT.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(image_DXT.obj)' or at 'C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
-glew32s.lib(glew.obj) : warning LNK4099: PDB 'glew_static.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\Debug\glew_static.pdb'; linking object as if no debug info
-  TextureDemo.vcxproj -> C:\Users\devel\Desktop\Getting Started\Getting Started\Demo\TextureDemo\Debug\TextureDemo.exe
+Shader.obj : warning LNK4049: locally defined symbol ___glewBindBuffer imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewBufferData imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewGenBuffers imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewAttachShader imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewCompileShader imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewCreateProgram imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewCreateShader imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewDeleteProgram imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewDeleteShader imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewEnableVertexAttribArray imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewGetAttribLocation imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewGetProgramiv imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewGetShaderInfoLog imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewGetShaderiv imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewGetUniformLocation imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewLinkProgram imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewShaderSource imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewUniform1f imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewUniform1i imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewUniform2f imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewUniform3f imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewUniform4f imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewUniformMatrix4fv imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewUseProgram imported
+Shader.obj : warning LNK4049: locally defined symbol ___glewVertexAttribPointer imported
+Window.obj : warning LNK4049: locally defined symbol _glewInit@0 imported
+Window.obj : warning LNK4049: locally defined symbol _glewGetErrorString@4 imported
+Window.obj : warning LNK4049: locally defined symbol _glewExperimental imported
+SOIL.lib(SOIL.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(SOIL.obj)' or at 'C:\Users\nouzo\Desktop\Life\Carleton\COMP2501\GroupProject\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
+SOIL.lib(image_helper.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(image_helper.obj)' or at 'C:\Users\nouzo\Desktop\Life\Carleton\COMP2501\GroupProject\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
+SOIL.lib(stb_image_aug.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(stb_image_aug.obj)' or at 'C:\Users\nouzo\Desktop\Life\Carleton\COMP2501\GroupProject\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
+SOIL.lib(image_DXT.obj) : warning LNK4099: PDB 'SOIL.pdb' was not found with 'SOIL.lib(image_DXT.obj)' or at 'C:\Users\nouzo\Desktop\Life\Carleton\COMP2501\GroupProject\Getting Started\Getting Started\Demo\TextureDemo\Debug\SOIL.pdb'; linking object as if no debug info
+glew32s.lib(glew.obj) : warning LNK4099: PDB 'glew_static.pdb' was not found with 'glew32s.lib(glew.obj)' or at 'C:\Users\nouzo\Desktop\Life\Carleton\COMP2501\GroupProject\Getting Started\Getting Started\Demo\TextureDemo\Debug\glew_static.pdb'; linking object as if no debug info
+  TextureDemo.vcxproj -> C:\Users\nouzo\Desktop\Life\Carleton\COMP2501\GroupProject\Getting Started\Getting Started\Demo\TextureDemo\Debug\TextureDemo.exe
