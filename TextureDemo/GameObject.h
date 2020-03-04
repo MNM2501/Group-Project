@@ -21,6 +21,7 @@ public:
 	// Getters
 	inline glm::vec3& getPosition() { return position; }
 	inline glm::vec3& getVelocity() { return velocity; }
+	int getDirect() { return direction; }
 
 	// Setters
 	inline void setPosition(glm::vec3& newPosition) { position = newPosition; }

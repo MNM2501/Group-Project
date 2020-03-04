@@ -13,7 +13,7 @@ void main()
 {
 	vec4 color = texture2D(onetex, uv_interp);
 	FragColor = vec4(color.r,color.g,color.b,color.a);
-    if((color.r + color.g + color.b) / 3.0 > 0.99 || color.a  == 0)
+    if((color.r + color.g + color.b) / 3.0 > 0.99 || color.a < 0.001)
 	{
  		discard;
 	}

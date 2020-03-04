@@ -20,8 +20,7 @@ void GameObject::update(double deltaTime) {
 	//move player
 	glm::vec3 offset = glm::vec3(size / 2 * direction,0, 0);
 	glm::vec3 futurePos = position + offset + velocity * (float)deltaTime * speed;
-
-	if (!World::checkForCollision(futurePos) && !World::boundaryDetection(futurePos))
+	if (!World::checkForCollision(futurePos))
 	{
 		printf("we move.... \n\n\n");
 		// Update object position with Euler integration

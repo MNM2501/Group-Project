@@ -23,13 +23,6 @@ int World::colSize = 0;
 std::vector<GLuint> World::textures = std::vector<GLuint>();
 int World::numElements = 0;
 
-	//boundaries
-int World::leftBoundary = 0;
-int World::rightBOundary = 0;
-int World:: upperBoundary = 0;
-int World::lowerBoundary = 0;
-
-
 
 World::World(int _rowSize, int _colSize, int** entityGrid, std::vector<GLuint> entityTextures, GLint entityNumElements)
 {
@@ -51,16 +44,18 @@ bool World::checkForCollision(glm::vec3 futurePos)
 	int j;
 
 	//If we're not in the grid, treat it as collision
-	if (worldToGridPos(futurePos, i, j))
+	if (!worldToGridPos(futurePos, i, j))
 	{
-		printf("What is at future grid ? %d\n", worldGrid[i][j]);
-		if (worldGrid[i][j] != 0)
-		{
-			printf("returning true...\n");
-			return true;
-		}
+		return true;
 	}
 
+	printf("What is at future grid ? %d\n", worldGrid[i][j]);
+	if (worldGrid[i][j] != 0)
+	{
+		printf("returning true...\n");
+		return true;
+	}
+	
 	printf("returning false...\n");
 	return false;
 }
@@ -88,7 +83,7 @@ bool World::worldToGridPos(glm::vec3 worldPos, int& i, int& j)
 	printf("%f || %f\n", gridToWorldPos(0, 0).x, gridToWorldPos(0, colSize -1).x);
 	bool inGrid = worldPos.x > gridToWorldPos(0, 0).x && worldPos.x < gridToWorldPos(0, colSize -1).x &&
 		worldPos.y < gridToWorldPos(0, 0).y && worldPos.y > gridToWorldPos(rowSize -1 , 0).y;
-	
+
 	if (!inGrid) return false;
 
 	printf("IN GRID!!\n");
@@ -102,17 +97,6 @@ bool World::worldToGridPos(glm::vec3 worldPos, int& i, int& j)
 	printf("grid coordinates : %d || %d\n", i, j);
 
 	return true;
-}
-
-//checks for boundary detection
-bool World::boundaryDetection(glm::vec3 pos)
-{
-	if (pos.x < leftBoundary || pos.x > rightBOundary || pos.y < lowerBoundary || pos.y > upperBoundary)
-	{
-		return true;
-	}
-
-	return false;
 }
 
 //renders terrain
