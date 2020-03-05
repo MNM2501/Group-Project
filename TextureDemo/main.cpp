@@ -246,7 +246,7 @@ void controls(void)
 
 	if (glfwGetKey(Window::getWindow(), GLFW_KEY_F) == GLFW_PRESS) {
 		if (player->getDownTime() <= 0) {
-			BulletGameObject* bullet = new BulletGameObject(player->getPosition(), tex[9], 6, 10, 270, 30);
+			BulletGameObject* bullet = new BulletGameObject(player->getPosition(), tex[9], 6, 10, 270, 500);
 			if (player->getxDirect() == 1) {
 				bullet->setVelocity(glm::vec3(bullet->getSpeed(), 0, 0));
 			}
@@ -311,7 +311,7 @@ void mainmenu(Window &window, Shader &shader) {
 		if (xpos > 300 && xpos < 500 && ypos > 535 && ypos < 665) {
 			startButton2->render(shader);
 			if (glfwGetMouseButton(Window::getWindow(), GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
-				std::cout << "YESSS" << std::endl;
+				//std::cout << "YESSS" << std::endl;
 				clicked = true;
 			}
 		}
@@ -417,7 +417,7 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 		currentGameObject->update(deltaTime);
 
 		// Render game objects
-		std::cout << currentGameObject->getPosition().y << std::endl;
+		//std::cout << currentGameObject->getPosition().y << std::endl;
 		currentGameObject->render(shader);
 	}
 
@@ -431,7 +431,7 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 		currentGameObject->update(deltaTime);
 
 		// Render game objects
-		std::cout << currentGameObject->getPosition().y << std::endl;
+		//std::cout << currentGameObject->getPosition().y << std::endl;
 		currentGameObject->render(shader);
 		currentGameObject->decreaseLifeSpan();
 	}
