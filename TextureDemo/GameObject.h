@@ -26,6 +26,9 @@ public:
 	inline void setPosition(glm::vec3& newPosition) { position = newPosition; }
 	inline void setVelocity(glm::vec3& newVelocity) { velocity = newVelocity; }
 
+
+	void setTexture(GLuint t) { texture = t; }
+
 protected:
 	// Object's Transform Variables
 	// TODO: Add more transformation variables

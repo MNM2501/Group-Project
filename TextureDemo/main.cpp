@@ -30,12 +30,19 @@ const unsigned int window_width_g = 1600;
 const unsigned int window_height_g = 1200;
 const glm::vec3 viewport_background_color_g(0.0, 0.0, 1);
 
+//Game state
+int GAMEOVER = false;
+
+
 //Global  object variables
 PlayerGameObject* player;
 GameObject* bomb;
 
+//Global UI elements
+GameObject* health;
+
 // Global texture info
-const int texSize = 10;
+const int texSize = 21;
 GLuint tex[texSize];
 
 // Global game object info
@@ -128,6 +135,17 @@ void setallTexture(void)
 	setthisTexture(tex[8], "kami.png");
 	setthisTexture(tex[9], "clash2.png");
 	setthisTexture(tex[9], "alienbomb.png");
+	setthisTexture(tex[10], "health10.png");
+	setthisTexture(tex[11], "health9.png");
+	setthisTexture(tex[12], "health8.png");
+	setthisTexture(tex[13], "health7.png");
+	setthisTexture(tex[14], "health6.png");
+	setthisTexture(tex[15], "health5.png");
+	setthisTexture(tex[16], "health4.png");
+	setthisTexture(tex[17], "health3.png");
+	setthisTexture(tex[18], "health2.png");
+	setthisTexture(tex[19], "health1.png");
+	setthisTexture(tex[20], "health0.png");
 
 
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
@@ -155,6 +173,9 @@ void setup(void)
 	// Note, player object should always be the first object in the game object vector 
 	player = new PlayerGameObject(glm::vec3(1.0f, 1.0f, 0.0f), tex[0], size);
 	gameObjects.push_back(player);
+
+	//setup health ui element
+	health = new GameObject(glm::vec3(-3.5f, 3.5f, 0.0f), tex[10], size);
 
 	//setup alien bomb
 	bomb = new GameObject(glm::vec3(29, 3, 0), tex[9], size);
@@ -293,6 +314,12 @@ void removeEnemies(std::vector<int> indices) {
 }
 
 
+//sets health
+void setHealth() {
+	int h = player->getHealth();
+	health->setTexture(tex[20 - h]);
+}
+
 //handles main menu
 void mainmenu(Window &window, Shader &shader) {
 	bool clicked = false;
@@ -401,8 +428,7 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 		if (distance <= 0.5) {
 
 			currentGameObject->setDead(true);
-			glfwSetWindowShouldClose(window.getWindow(), 1);
-
+			GAMEOVER = true;
 		}
 
 	}
@@ -456,12 +482,43 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 	removeEnemies(theDeadOnes);
 	theDeadOnes.clear();
 
+	//
+	if (player->getIFrames() <= 0) {
+		for (int n = 0; n < enemies.size(); n++) {
+			EnemyGameObject* nextGameObject = enemies[n];
+			if (nextGameObject->isDead() == false) {
+				float Xd = nextGameObject->getPosition().x - player->getPosition().x;
+				Xd = Xd * Xd;
+				float Yd = nextGameObject->getPosition().y - player->getPosition().y;
+				Yd = Yd * Yd;
+				float distance = sqrt(Xd + Yd);
+				if (distance <= (nextGameObject->getHitBox() + player->getHitBox())) {
+					player->decreaseHealth();
+					setHealth();
+					player->setIFrames(50);
+					break;
+				}
+			}
+		}
+	}
+
 
 	//render background
 	if (player->getDownTime() > 0) {
 		player->decreaseDownTime();
 	}
 
+
+	if (player->getIFrames() > 0) {
+		player->decreaseIFrames();
+	}
+	if (player->getHealth() <= 0) {
+		GAMEOVER = true;
+	}
+	background->render(shader);
+	glm::mat4 UIMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.25, 0.25, 0.25));
+	shader.setUniformMat4("viewMatrix", UIMatrix);
+	health->render(shader);
 
 	//render background
 	background->render(shader);
@@ -488,7 +545,7 @@ int main(void){
 
 		// Run the main loop
 		double lastTime = glfwGetTime();
-		while (!glfwWindowShouldClose(window.getWindow())) {
+		while (!glfwWindowShouldClose(window.getWindow()) && !GAMEOVER) {
 			
 			// Calculate delta time
 			double currentTime = glfwGetTime();
