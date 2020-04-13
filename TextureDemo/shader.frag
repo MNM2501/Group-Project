@@ -8,6 +8,9 @@ in vec2 uv_interp;
 out vec4 FragColor;
 
 uniform sampler2D onetex;
+uniform float time;
+uniform float hurt;
+uniform float startTime;
 
 void main()
 {
@@ -17,5 +20,13 @@ void main()
 	{
  		discard;
 	}
+
+	if(hurt > 0)
+	{
+		float myTime = time - startTime;
+		vec4 red = vec4(1.0f, abs(cos(myTime * 8)), abs(cos(myTime * 8)), 1.0f);
+		FragColor  *= red;
+	}
+
 //	 FragColor = color_interp;
 }

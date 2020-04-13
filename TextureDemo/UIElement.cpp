@@ -5,6 +5,7 @@ UIElement::UIElement(glm::vec3 &entityPos, GLuint entityTexture, GLint entityNum
 	position = entityPos;
 	texture = entityTexture;
 	numElements = entityNumElements;
+	scale = glm::vec3(1);
 }
 
 void UIElement::render(Shader &shader)
