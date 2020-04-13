@@ -1,8 +1,5 @@
 #include "World.h"
 
-
-
-
 /*	WorldGrid value information
 
 	Tiles		
@@ -17,159 +14,269 @@
 */
 
 //Initialize static members
-int** World::worldGrid = NULL;
-int World::rowSize = 0;
-int World::colSize = 0;
 std::vector<GLuint> World::textures = std::vector<GLuint>();
+std::vector<GameObject*> World::gameObjects = std::vector<GameObject*>();
+std::vector<std::vector<Cell*>> World::grid = std::vector<std::vector<Cell*>>();
+
 int World::numElements = 0;
-
-	//boundaries
-int World::leftBoundary = 0;
-int World::rightBOundary = 0;
-int World:: upperBoundary = 0;
-int World::lowerBoundary = 0;
+Level* World::currentLevel = NULL;
 
 
+Cell::Cell() {}
 
-World::World(int _rowSize, int _colSize, int** entityGrid, std::vector<GLuint> entityTextures, GLint entityNumElements)
+World::World(std::vector<GLuint> entityTextures, GLint entityNumElements)
 {
-	worldGrid = entityGrid;
 	textures = entityTextures;
 	numElements = entityNumElements;
-
-	//dimensions
-	rowSize = _rowSize;
-	colSize = _colSize;
 }
 
-
-//check for collision
-/*
-	0 - x axis
-	1 - y axis
-*/
-bool World::checkForCollision(glm::vec3 futurePos, glm::vec3 offset, int axis)
+void World::loadLevel(Level* level)
 {
-	//determine future pos
-	//This is a hotfix for a bug, should update later.
-	//printf("axis : %d\n", axis);
-	if (axis == 0)
-	{
-		futurePos = glm::vec3(futurePos.x, futurePos.y - offset.y, futurePos.z);
-	}
-	else if (axis == 1)
-	{
-		futurePos = glm::vec3(futurePos.x - offset.x, futurePos.y, futurePos.z);
-	}
-	else
-	{
-		//printf("axis passed in isn't valid in World.cpp -> checkForCollision()... check comments");
-		return true;
-	}
+	currentLevel = level;
 
+	std::vector<std::vector<int>> terrain = currentLevel->terrain;
 
-	//Potential grid positions of location we want to go to
-	int i;
-	int j;
-
-	//If we're not in the grid, treat it as collision
-	if (worldToGridPos(futurePos, i, j))
+	for (int i = 0; i < currentLevel->rowSize; i++)
 	{
-		//printf("What is at future grid ? %d\n", worldGrid[i][j]);
-		if (worldGrid[i][j] != 0)
+		grid.push_back(std::vector<Cell*>());
+		for (int j = 0; j < currentLevel->colSize; j++)
 		{
-			//printf("returning true...\n");
-			return true;
-		}
-		else
-		{
-			return false;
+			//Create Cell object and initialize its attributes
+			Cell* cell = new Cell();
+			cell->texture = textures[terrain[i][j]];
+			cell->isTerrain = terrain[i][j] == 0 ? false : true;
+
+			cell->gridPos = glm::vec2(i, j);
+
+			glm::vec3 worldPos;
+			gridToWorldPos(i, j, &worldPos);
+			cell->worldPos = worldPos;
+
+			grid[i].push_back(cell);
 		}
 	}
+}
 
-	//printf("returning false...\n");
-	if (worldToGridPos(futurePos - offset, i, j))
+
+void World::run()
+{
+	destroy();
+	updateObjects();
+	checkForCollision();
+	clear();
+}
+
+void World::destroy()
+{
+	for (int i = 0; i < gameObjects.size(); i++)
 	{
-		return false;
+		if (gameObjects[i]->shouldDie)
+		{
+			gameObjects.erase(gameObjects.begin() + i);
+			--i;
+		}
 	}
-	else
-		return true;
+}
 
-	
+void World::updateObjects()
+{
+	for (int k = 0; k < gameObjects.size(); k++)
+	{
+		glm::vec3 worldPos = gameObjects[k]->getPosition();
+		int i, j;
 
-	
+
+		worldToGridPos(worldPos, i, j);
+
+		//Destroy object if it is out of bounds
+		if (outOfBounds(i, j))
+		{
+			gameObjects.erase(gameObjects.begin() + k);
+			--k;
+			continue;
+		}
+
+		//add object to our grid
+		grid[i][j]->objects.push_back(gameObjects[k]);
+	}
+}
+
+void World::clear()
+{
+	for (int i = 0; i < currentLevel->rowSize; i++)
+	{
+		for (int j = 0; j < currentLevel->colSize; j++)
+		{
+			grid[i][j]->objects.clear();
+		}
+	}
 }
 
 
-//convert grid position to world position
-glm::vec3 World::gridToWorldPos(int i, int j)
+void  World::checkForCollision()
 {
-	glm::vec3 position;
+	for (int k = 0; k < gameObjects.size(); k++)
+	{
+		GameObject* currentGameObject = gameObjects[k];
+		glm::vec3 worldPos = gameObjects[k]->getPosition();
 
-	int horizon = (int)(glm::floor((float)(rowSize / 2)));
+		int i, j;
+		worldToGridPos(worldPos, i, j);
 
-	position = glm::vec3(j, -(i - horizon), 1);
-	return position;
+		Cell* currentCell = grid[i][j];
+
+		/*  The surrounding cells
+			0 - left
+			1 - right
+			2 - up
+			3 - down
+			4 - top left
+			5 - top right
+			6 - bottom left
+			7 - bottom right
+		*/
+		Cell* surroundingCells[8] =
+		{
+			!outOfBounds(i,j - 1) ? grid[i][j - 1] : NULL, // left
+			!outOfBounds(i,j + 1) ? grid[i][j + 1] : NULL, //right
+			!outOfBounds(i - 1,j) ? grid[i - 1][j] : NULL, //up
+			!outOfBounds(i + 1,j) ? grid[i + 1][j] : NULL, //down
+			!outOfBounds(i - 1,j - 1) ? grid[i - 1][j - 1] : NULL, // top left
+			!outOfBounds(i - 1,j + 1) ? grid[i - 1][j + 1] : NULL, // top right
+			!outOfBounds(i + 1,j - 1) ? grid[i + 1][j - 1] : NULL, // bottom left
+			!outOfBounds(i + 1,j + 1) ? grid[i + 1][j + 1] : NULL, // bottom right
+		};
+
+
+		//check for collision with objects in same cell
+		for (int m = 0; m < currentCell->objects.size(); m++)
+		{
+			GameObject* otherGameObject = currentCell->objects[m];
+
+			//ignore same team collision
+			if (currentGameObject->team == otherGameObject->team)
+			{
+				continue;
+			}
+
+			if (glm::length(currentGameObject->getPosition() - otherGameObject->getPosition()) < currentGameObject->getHitBox() || 
+				glm::length(currentGameObject->getPosition() - otherGameObject->getPosition()) < otherGameObject->getHitBox())
+			{
+				currentGameObject->collide(otherGameObject->type, glm::vec3(), otherGameObject);
+			}
+		}
+
+
+		//check for collision with objects and terrain in surroundoing cells
+		for (int m = 0; m < 8; m++)
+		{
+
+			Cell* surCell = surroundingCells[m];
+			if (surCell == NULL) {
+				continue;
+			}
+
+			//collision with tile in surrounding cell
+			if (surCell->isTerrain && glm::length(currentGameObject->getPosition() - surCell->worldPos) < currentGameObject->getHitBox() + 0.5f)
+			{
+				glm::vec3 normal;
+
+				glm::vec3 diff = currentGameObject->getPosition() - surCell->worldPos;
+				diff = glm::normalize(diff);
+
+				//determine collision normal based on what surface of terrain we're colliding with
+				if (diff.y > sqrt(2.0f) / 2.0f)
+				{
+					normal = glm::vec3(0, 1, 0);
+				}
+				else if (diff.y < sqrt(2.0f) / 2.0f && diff.y > -(sqrt(2.0f) / 2.0f) && diff.x > 0)
+				{
+					normal = glm::vec3(1, 0, 0);
+				}
+				else if (diff.y < sqrt(2.0f) / 2.0f && diff.y > -(sqrt(2.0f) / 2.0f) && diff.x < 0)
+				{
+					normal = glm::vec3(-1, 0, 0);
+				}
+				else if (diff.y < -(sqrt(2.0f) / 2.0f))
+				{
+					normal = glm::vec3(0, -1, 0);
+				}
+				currentGameObject->collide(TERRAIN, normal, NULL);
+			}
+
+			//Collision with object in surrounding cells
+			for (int n = 0; n < surCell->objects.size(); n++)
+			{
+				GameObject* otherGameObject = surCell->objects[n];
+
+				//ignore same team collision
+				if (currentGameObject->team == otherGameObject->team)
+				{
+					continue;
+				}
+
+				if (glm::length(currentGameObject->getPosition() - otherGameObject->getPosition()) < currentGameObject->getHitBox() ||
+					glm::length(currentGameObject->getPosition() - otherGameObject->getPosition()) < otherGameObject->getHitBox())
+				{
+					//colliding with other objects
+					currentGameObject->collide(otherGameObject->type, glm::vec3(), otherGameObject);
+				}
+
+			}
+		}
+	}
 }
 
-
-//convert world position to grid position
-//returns true if found grid position, false otherwise
-bool World::worldToGridPos(glm::vec3 worldPos, int& i, int& j)
+bool World::worldToGridPos(glm::vec3 worldPos, int& i, int&j)
 {
-	worldPos *= 1.01f;
-	//If we're not in the grid, return false
-	//printf("future pos : %f || %f\n", worldPos.x, worldPos.y);
-	//printf("%f || %f\n", gridToWorldPos(0, 0).x, gridToWorldPos(0, colSize -1).x);
-	bool inGrid = worldPos.x > gridToWorldPos(0, 0).x && worldPos.x < gridToWorldPos(0, colSize -1).x &&
-		worldPos.y < gridToWorldPos(0, 0).y && worldPos.y > gridToWorldPos(rowSize -1 , 0).y;
-	
-	if (!inGrid) return false;
+	int xHorizon = currentLevel->xHorizon;
+	int yHorizon = currentLevel->yHorizon;
 
-	//printf("IN GRID!!\n");
+	j = worldPos.x + xHorizon;
+	i = -(worldPos.y - yHorizon);
 
-
-	//Compute grid positions
-	int horizon = gridToWorldPos(0, 0).y;
-	i = -((int)(glm::floor(worldPos.y + 0.5)) - horizon);
-	j = (int)(glm::floor(worldPos.x + 0.5));
-
-	//printf("world position %f || % f\n", worldPos.x, worldPos.y);
-	//printf("grid coordinates : %d || %d\n\n\n", i, j);
-
+	if (outOfBounds(i, j)) return false;
 	return true;
 }
 
-//checks for boundary detection
-bool World::boundaryDetection(glm::vec3 pos)
+void World::gridToWorldPos(int i, int j, glm::vec3* worldPos)
 {
-	if (pos.x < leftBoundary || pos.x > rightBOundary || pos.y < lowerBoundary || pos.y > upperBoundary)
-	{
-		return true;
-	}
+	int xHorizon = currentLevel->xHorizon;
+	int yHorizon = currentLevel->yHorizon;
 
-	return false;
+	float x = j - xHorizon;
+	float y = -(i - yHorizon);
+	worldPos->x = x;
+	worldPos->y = y;
+	worldPos->z = 0;
 }
 
-//renders terrain
+bool World::outOfBounds(int i, int j)
+{
+	return i < 0 || i > currentLevel->rowSize - 1 || j < 0 || j > currentLevel->colSize - 1;
+}
+
 void World::render(Shader& shader)
 {
-	for (int i = 0; i < rowSize; i++)
-	{
-		for (int j = 0; j < colSize; j++)
-		{
-			//If there is supposed to be nothing, continue
-			if (worldGrid[i][j] == 0) continue;
+	shader.setUniform1f("isTile", 1.0f);
 
+	for (int i = 0; i < currentLevel->rowSize; i++)
+	{
+		for (int j = 0; j < currentLevel->colSize; j++)
+		{
+			Cell* cell = grid[i][j];
+
+			//Set texture based on tile value
+			if (!cell->isTerrain) continue;
 
 			//position of tile
-			glm::vec3 position = gridToWorldPos(i, j);
+			glm::vec3 position = glm::vec3();
+			gridToWorldPos(i, j, &position);
 
-
+			//printf("%f || %f || %f \n", position.x, position.y, position.z);
 
 			// Bind the entities texture
-			glBindTexture(GL_TEXTURE_2D, textures[worldGrid[i][j]]);
-
+			glBindTexture(GL_TEXTURE_2D, cell->texture);
 
 			// Setup the transformation matrix for the shader
 			// TODO: Add different types of transformations
@@ -185,7 +292,7 @@ void World::render(Shader& shader)
 			glDrawElements(GL_TRIANGLES, numElements, GL_UNSIGNED_INT, 0);
 		}
 	}
+
+	shader.setUniform1f("isTile", -1.0f);
+
 }
-
-
-

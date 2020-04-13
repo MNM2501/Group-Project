@@ -1,6 +1,8 @@
 #pragma once
 
 #include "GameObject.h"
+#include "World.h"
+#include "BulletGameObject.h"
 
 // Inherits from GameObject
 class PlayerGameObject : public GameObject {
@@ -9,24 +11,25 @@ public:
 
 	// Update function for moving the player object around
 	virtual void update(double deltaTime) override;
-	void resetDownTime() { downTime = 50; }
-	void decreaseDownTime() { downTime -= 1; }
-	void decreaseHealth() { health -= 1; }
-	void resetIframes() { IF = 50; }
-	void decreaseIFrames() { IF -= 1; }
-	void setIFrames(int frames) { IF = frames; }
+	
+	virtual void collide(string otherType, glm::vec3 normal, GameObject* otherObject) override;
 
+	virtual void receiveDmg(int dmg) override;
 
+	bool getCanFire() { return canFire; }
 
-	int getDownTime() { return downTime; }
-	int getHealth() { return health; }
-	int getIFrames() { return IF; }
+	//tells player it has fired
+	void fire();
+
 	float getHitBox() { return hitBox; }
 
 
 private:
-	int downTime;
-	int health;
-	int IF;
-	float hitBox;
+	//handles firing
+	float prevFire;
+	float fireCooldown;
+	bool canFire;
+
+	
+
 };

@@ -13,7 +13,7 @@ public:
 	UIElement(glm::vec3 &entityPos, GLuint entityTexture, GLint entityNumElements);
 
 	//renders UIElement
-	void render(Shader &shader);
+	virtual void render(Shader &shader);
 
 	//Setters
 	void setScale(glm::vec3 newScale) { scale = newScale; }
