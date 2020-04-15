@@ -5,22 +5,17 @@ class Tank :
 	public EnemyGameObject
 {
 public:
-	Tank(glm::vec3& entityPos, GLuint entityTextures[3], GLint entityNumElements, int ap, PlayerGameObject* player);
+	Tank(glm::vec3& entityPos, std::vector<GLuint> entityTextures, GLint entityNumElements, int ap, PlayerGameObject* player);
 
 	virtual void render(Shader& shader) override;
 	virtual void update(double deltaTime) override;
 	
 private:
-	
+
+	virtual void fire() override;
+
 	GLuint turretTexture;
-	GLuint bulletTexture;
 	float angle;
-
-	void fire();
-
-	//handle firing
-	float prevTime;
-	float cooldown;
 
 
 };

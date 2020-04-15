@@ -18,6 +18,7 @@ GameObject::GameObject(glm::vec3 &entityPosition, GLuint entityTexture, GLint en
 	hitBox = 0.5;
 	shouldDie = false;
 	team = "";
+	sv.noGravity = true;
 
 	//health
 	health = 20;
@@ -40,23 +41,21 @@ void GameObject::stop()
 // Updates the GameObject's state
 void GameObject::update(double deltaTime) {
 
-	//move object
+	//update delta time in state vector
 	sv.deltaTime = deltaTime;
-	sv.update(glm::vec3());
 
 	//update our direction
 	if (sv.velocity.x != 0) xDirection = glm::sign(sv.velocity.x);
 
-	//handle dmg timer
+	//handle  receiving dmg timer
 	if (prevDmg + dmgCooldown < glfwGetTime())
 	{
 		canReceiveDmg = true;
 	}
-
 }
 
 //handle collision
-void GameObject::collide(string otherType, glm::vec3 normal, GameObject* otherObject)
+void GameObject::collide(int otherType, glm::vec3 normal, GameObject* otherObject)
 {
 	//--
 }

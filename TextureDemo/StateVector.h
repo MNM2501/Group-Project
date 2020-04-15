@@ -22,8 +22,9 @@ public:
 	glm::vec3 velocity;
 	glm::vec3 velocityRaw;
 
-	//resting flag
-	bool resting;
+	// regulate max speed and apply gravity
+	bool hasMaxSpeed;
+	bool noGravity;
 
 };
 

@@ -7,8 +7,9 @@
 
 const double PI = 3.14159265358979323846;
 
-BulletGameObject::BulletGameObject(glm::vec3& entityPos, GLuint entityTexture, GLint entityNumElements, glm::vec3 direction)
+BulletGameObject::BulletGameObject(glm::vec3& entityPos, GLuint entityTexture, GLint entityNumElements, glm::vec3 direction, int damage)
 	: GameObject(entityPos, entityTexture, entityNumElements) {
+	this->damage = damage;
 	type = BULLET;
 	speed = 5;
 	hitBox = 0.3;
@@ -20,6 +21,7 @@ BulletGameObject::BulletGameObject(glm::vec3& entityPos, GLuint entityTexture, G
 
 //update function for moving bullet around
 void BulletGameObject::update(double deltaTime) {
+
 	// special player updates go here
 	sv.position += sv.velocity * (float)deltaTime * speed;
 
@@ -33,10 +35,13 @@ void BulletGameObject::update(double deltaTime) {
 }
 
 //collision for this object
-void BulletGameObject::collide(string otherType, glm::vec3 normal, GameObject* otherObject)
+void BulletGameObject::collide(int otherType, glm::vec3 normal, GameObject* otherObject)
 {
+	//avoid collisions between bullets and powerups
+	if (otherType == POWERUP) return;
+
 	if(otherObject != NULL)
-		otherObject->receiveDmg(10);
+		otherObject->receiveDmg(damage);
 
 	shouldDie = true;
 }
