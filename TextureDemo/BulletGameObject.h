@@ -6,7 +6,7 @@ class BulletGameObject :
 	public GameObject
 {
 	public:
-		BulletGameObject(glm::vec3& entityPos, GLuint entityTexture, GLint entityNumElements, glm::vec3 direction);
+		BulletGameObject(glm::vec3& entityPos, GLuint entityTexture, GLint entityNumElements, glm::vec3 direction, int damage);
 
 		// Update function for moving the player object around
 		virtual void update(double deltaTime) override;
@@ -21,10 +21,11 @@ class BulletGameObject :
 		float getAngle() { return angle; }
 		float getHitBox() { return hitBox; }
 		
-		virtual void collide(string otherType, glm::vec3 normal, GameObject* otherObject) override;
+		virtual void collide(int otherType, glm::vec3 normal, GameObject* otherObject) override;
 
 
-	private:
+	protected:
+		int damage;
 		float speed;
 		float angle;
 };

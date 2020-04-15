@@ -20,6 +20,8 @@
 #include "BulletGameObject.h"
 #include "HealthBar.h"
 #include "Tank.h"
+#include "Powerup.h";
+#include "GravityTank.h"
 
 
 // Macro for printing exceptions
@@ -44,7 +46,7 @@ GameObject* bomb;
 HealthBar* health;
 
 // Global texture info
-const int texSize = 24;
+const int texSize = 27;
 GLuint tex[texSize];
 
 //global background Object
@@ -142,7 +144,14 @@ void setallTexture(void)
 	setthisTexture(tex[20], "health0.png");
 	setthisTexture(tex[21], "tankbody.png");
 	setthisTexture(tex[22], "turret.png");
-	setthisTexture(tex[23], "tank_bullet3.png");
+	setthisTexture(tex[23], "bullet_green.png");
+	setthisTexture(tex[24], "tank_bullet2.png");
+	setthisTexture(tex[25], "powerup.png");
+	setthisTexture(tex[26], "tank_grey.png");
+
+
+
+
 
 
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
@@ -222,14 +231,16 @@ void setup(void)
 	mmBackground->setScale(glm::vec3(8, 8, 1));
 
 	//setup tank sprites
-	GLuint tankSprites[3] = { tex[21], tex[22], tex[23] };
+	std::vector<GLuint> tankSprites = { tex[26], tex[23], tex[22] };
+	std::vector<GLuint> enemySprites = { tex[7], tex[23]};
+	std::vector<GLuint> enemySprites2 = { tex[8], tex[23] };
+
 
 	//Setup enemies
-	world->gameObjects.push_back(new Tank(glm::vec3(3.0f, 1.0f, 0.0f), tankSprites, size, 10, player));
-	world->gameObjects.push_back(new EnemyGameObject(glm::vec3(8.0f, 3.0f, 0.0f), tex[7], size, 1.2, 30, 1, player));
-	world->gameObjects.push_back(new EnemyGameObject(glm::vec3(10.0f, 3.0f, 0.0f), tex[7], size, 1.2, 3, 1, player));
-	world->gameObjects.push_back(new EnemyGameObject(glm::vec3(13.0f, 3.0f, 0.0f), tex[7], size, 1.2, 3, 1, player));
-	world->gameObjects.push_back(new EnemyGameObject(glm::vec3(22.0f, 3.0f, 0.0f), tex[8], size, 1.2, 3, 1, player));
+	Factory::spawnGravityTank(glm::vec3(3.0f, 1.0f, 0.0f), tankSprites, size, 10, player);
+	Factory::spwnPowerup(glm::vec3(3.0f, 2.0f, 0.0f), tex[25], size);
+	Factory::spawnEnemyGameObject(glm::vec3(8.0f, 5.0f, 0.0f), enemySprites, size, 1.2, 30, 1, player);
+	Factory::spawnEnemyGameObject(glm::vec3(22.0f, 5.0f, 0.0f), enemySprites2, size, 1.2, 3, 1, player);
 
 }
 
@@ -263,9 +274,13 @@ void controls(void)
 
 	if (glfwGetKey(Window::getWindow(), GLFW_KEY_F) == GLFW_PRESS && player->getCanFire()) {
 		glm::vec3 direction = glm::vec3(1, 0, 0) * (float)player->getxDirect();
-		BulletGameObject* bullet = new BulletGameObject(player->getPosition(), tex[9], 6, direction);
-		bullet->team = ALLIES;
-		world->gameObjects.push_back(bullet);
+		Factory::spawnBulletGameObject(player->getPosition(), tex[9], 6, direction, player->team, player->damage);
+		player->fire();
+	}
+
+	if (glfwGetKey(Window::getWindow(), GLFW_KEY_SPACE) == GLFW_PRESS && player->getCanFire()) {
+		glm::vec3 direction = glm::vec3(1, 0, 0) * (float)player->getxDirect();
+		Factory::spawnBomb(player->getPosition(), tex[24], 6, player->damage, player->team);
 		player->fire();
 	}
 

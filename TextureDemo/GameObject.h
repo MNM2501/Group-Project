@@ -15,7 +15,7 @@ class GameObject {
 public:
 	GameObject(glm::vec3 &entityPosition, GLuint entityTexture, GLint entityNumElements);
 
-	string type;
+	int type;
 	string team;
 
 	// Updates the GameObject's state. Can be overriden for children
@@ -25,7 +25,7 @@ public:
 	virtual void render(Shader &shader);
 
 	//handles collision
-	virtual void collide(string otherType, glm::vec3 normal, GameObject* otherObject);
+	virtual void collide(int otherType, glm::vec3 normal, GameObject* otherObject);
 
 	//adds a force
 	void addForce(glm::vec3 force);

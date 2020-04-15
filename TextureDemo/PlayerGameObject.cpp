@@ -16,9 +16,11 @@ PlayerGameObject::PlayerGameObject(glm::vec3 &entityPos, GLuint entityTexture, G
 	speed = 3;
 	health = 100;
 	hitBox = 0.5;
+	damage = 10;
 
 	//player firing
 	fireCooldown = 0.2f;
+	startFireCooldown = fireCooldown;
 	prevFire = 0.0f;
 	canFire = false;
 
@@ -26,6 +28,12 @@ PlayerGameObject::PlayerGameObject(glm::vec3 &entityPos, GLuint entityTexture, G
 	dmgCooldown = 1.5f;
 	prevDmg = 0.0f;
 	canReceiveDmg = true;
+
+	//Powerup
+	hasPowerup = false;
+	startTimePowerup = 0;
+	powerupDuration = 0;
+
 
 }
 
@@ -36,13 +44,12 @@ void PlayerGameObject::fire()
 	canFire = false;
 }
 
-void PlayerGameObject::collide(string otherType, glm::vec3 normal, GameObject* otherGameObject)
+void PlayerGameObject::collide(int otherType, glm::vec3 normal, GameObject* otherGameObject)
 {
 
 	if (otherType == TERRAIN)
 	{
 		sv.position += -sv.velocity * sv.deltaTime * speed * 1.1f;
-		receiveDmg(0);
 		return;
 	}
 
@@ -69,6 +76,12 @@ void PlayerGameObject::update(double deltaTime) {
 	{
 		canReceiveDmg = true;
 	}
+	//handle powerup timer
+	if (hasPowerup == true && startTimePowerup + powerupDuration < glfwGetTime())
+	{
+		hasPowerup = false;
+		fireCooldown = startFireCooldown;
+	}
 
 
 	// special player updates go here
@@ -76,4 +89,15 @@ void PlayerGameObject::update(double deltaTime) {
 
 	//update our direction
 	if (sv.velocity.x != 0) xDirection = glm::sign(sv.velocity.x);
+}
+
+void PlayerGameObject::setPowerup(Powerup* p)
+{
+	if (hasPowerup) return;
+
+	hasPowerup = true;
+	startTimePowerup = glfwGetTime();
+	powerupDuration = p->duration;
+	fireCooldown /= p->cooldownDivider;
+
 }

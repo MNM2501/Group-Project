@@ -1,12 +1,13 @@
 #pragma once
 
 //types
-#define PLAYER "player"
-#define OBJECT "object"
-#define BULLET "bullet"
-#define TERRAIN "terrain"
-#define ENEMY "enemy"
-#define TANK "tank"
+#define OBJECT 100
+#define PLAYER 101
+#define BULLET 102
+#define TERRAIN 103
+#define ENEMY 104
+#define TANK 105
+#define POWERUP 106
 
 //sides
 #define ALLIES "allies"

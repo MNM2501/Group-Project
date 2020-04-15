@@ -2,9 +2,8 @@
 
 
 
-Tank::Tank(glm::vec3& entityPos, GLuint entityTextures[3], GLint entityNumElements, int ap, PlayerGameObject* player) :
-	EnemyGameObject(entityPos, entityTextures[0], entityNumElements, 1.0f, 20, 10, player), turretTexture(entityTextures[1]),
-	bulletTexture(entityTextures[2])
+Tank::Tank(glm::vec3& entityPos, std::vector<GLuint> entityTextures, GLint entityNumElements, int ap, PlayerGameObject* player) :
+	EnemyGameObject(entityPos, entityTextures, entityNumElements, 1.0f, 20, 10, player), turretTexture(entityTextures[2])
 {
 	type = TANK;
 	team = ENEMIES;
@@ -13,7 +12,15 @@ Tank::Tank(glm::vec3& entityPos, GLuint entityTextures[3], GLint entityNumElemen
 
 	//firing
 	prevTime = 0.0f;
-	cooldown = 2.0f;
+	cooldown = 1.0f;
+}
+
+void Tank::fire()
+{
+	Factory::spawnBulletGameObject(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture, numElements,
+		glm::normalize(player->getPosition() - getPosition()), this->team, 10);
+
+	prevTime = glfwGetTime();
 }
 
 void Tank::update(double deltaTime)
@@ -31,13 +38,6 @@ void Tank::update(double deltaTime)
 	GameObject::update(deltaTime);
 }
 
-void Tank::fire()
-{
-	Factory::spawnBulletGameObject(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture, numElements,
-		glm::normalize(player->getPosition() - getPosition()), this->team);
-
-	prevTime = glfwGetTime();
-}
 
 void Tank::render(Shader& shader)
 {
