@@ -6,10 +6,8 @@
 #include <glm/glm.hpp>
 #include <iostream>
 
-#include "Shader.h"
 #include "GameObject.h"
 #include "Level.h"
-#include "ObjectTypes.h"
 
 
 class Cell
@@ -33,10 +31,18 @@ class World
 {
 
 public:
-	World(std::vector<GLuint> entityTextures, GLint entityNumElements);
+	World(GLint entityNumElements);
+
+	//textures
+	std::vector<GLuint> objectTextures;
+
+	//health bar
 
 	//loads a level
 	static void loadLevel(Level* level);
+
+	//closes current level
+	static void closeLevel();
 
 	//runs the world
 	static void run();
@@ -49,7 +55,6 @@ public:
 
 
 private:
-	static std::vector<GLuint> textures;
 	static GLint numElements;
 	static Level* currentLevel;
 	static std::vector<std::vector<Cell*>> grid;
@@ -71,5 +76,8 @@ private:
 
 	//clears our grid - done at the end of every frame
 	static void clear();
+
+	static void spawnInitialObjects();
+
 };
 

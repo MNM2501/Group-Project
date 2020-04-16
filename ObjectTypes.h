@@ -7,9 +7,13 @@
 #define TERRAIN 103
 #define ENEMY 104
 #define TANK 105
-#define POWERUP 106
+#define GRAVITY_TANK 106
+#define POWERUP 107
+#define ALIEN_BOMB 108
 
 //sides
 #define ALLIES "allies"
 #define ENEMIES "enemies"
+
+
 

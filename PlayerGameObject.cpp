@@ -1,6 +1,5 @@
 #include "PlayerGameObject.h"
-
-#include "Window.h"
+#include "GameController.h"
 
 /*
 	PlayerGameObject inherits from GameObject
@@ -15,11 +14,12 @@ PlayerGameObject::PlayerGameObject(glm::vec3 &entityPos, GLuint entityTexture, G
 	team = ALLIES;
 	speed = 3;
 	health = 100;
-	hitBox = 0.5;
+	hitBox = 0.4;
 	damage = 10;
+	soulDrop = 0;
 
 	//player firing
-	fireCooldown = 0.2f;
+	fireCooldown = GameController::firingCooldown;
 	startFireCooldown = fireCooldown;
 	prevFire = 0.0f;
 	canFire = false;
@@ -46,7 +46,6 @@ void PlayerGameObject::fire()
 
 void PlayerGameObject::collide(int otherType, glm::vec3 normal, GameObject* otherGameObject)
 {
-
 	if (otherType == TERRAIN)
 	{
 		sv.position += -sv.velocity * sv.deltaTime * speed * 1.1f;
@@ -60,6 +59,7 @@ void PlayerGameObject::collide(int otherType, glm::vec3 normal, GameObject* othe
 
 void PlayerGameObject::receiveDmg(int dmg)
 {
+	if (GameController::immunePlayer) return;
 	GameObject::receiveDmg(dmg);
 }
 

@@ -17,6 +17,7 @@ public:
 
 	int type;
 	string team;
+	int soulDrop;
 
 	// Updates the GameObject's state. Can be overriden for children
 	virtual void update(double deltaTime);
@@ -58,6 +59,7 @@ public:
 protected:
 	// Object's Transform Variables
 	// TODO: Add more transformation variables
+
 	StateVector sv;
 	int xDirection;
 	int yDirection;

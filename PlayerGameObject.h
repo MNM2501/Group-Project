@@ -2,7 +2,6 @@
 
 #include "GameObject.h"
 #include "World.h"
-#include "BulletGameObject.h"
 #include "Powerup.h"
 
 // Inherits from GameObject
@@ -45,7 +44,6 @@ private:
 	float fireCooldown;
 	float startFireCooldown;
 	bool canFire;
-
 	
 
 };

@@ -1,7 +1,5 @@
 #include "GravityBullet.h"
 
-
-
 GravityBullet::GravityBullet(glm::vec3& entityPos, GLuint entityTexture, GLint entityNumElements, glm::vec3 direction, int damage):
 	BulletGameObject(entityPos, entityTexture, entityNumElements, direction, damage)
 {
@@ -16,7 +14,7 @@ void GravityBullet::update(double deltaTime)
 {
 	//determine angle
 	glm::vec3 direction = glm::normalize(sv.velocity);
-	angle = acos(glm::dot(direction, glm::vec3(1.0f, 0.0f, 0.0f)));
+	angle = atan2(direction.y, direction.x);
 
 	sv.update(glm::vec3(0));
 }

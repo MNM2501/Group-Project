@@ -1,20 +1,8 @@
 #include "World.h"
-
-/*	WorldGrid value information
-
-	Tiles		
-	0 - Nothing
-	1 - grass tile
-	2 - dirt tile
-	
-	--------------------------------------
-
-	Entities
-	100 - Player
-*/
+#include "Factory.h"
+#include "GameController.h"
 
 //Initialize static members
-std::vector<GLuint> World::textures = std::vector<GLuint>();
 std::vector<GameObject*> World::gameObjects = std::vector<GameObject*>();
 std::vector<std::vector<Cell*>> World::grid = std::vector<std::vector<Cell*>>();
 
@@ -24,9 +12,8 @@ Level* World::currentLevel = NULL;
 
 Cell::Cell() {}
 
-World::World(std::vector<GLuint> entityTextures, GLint entityNumElements)
+World::World(GLint entityNumElements)
 {
-	textures = entityTextures;
 	numElements = entityNumElements;
 }
 
@@ -34,6 +21,7 @@ void World::loadLevel(Level* level)
 {
 	currentLevel = level;
 
+	Factory::spawnPlayerGameObject(level->playerStart);
 	std::vector<std::vector<int>> terrain = currentLevel->terrain;
 
 	for (int i = 0; i < currentLevel->rowSize; i++)
@@ -43,8 +31,9 @@ void World::loadLevel(Level* level)
 		{
 			//Create Cell object and initialize its attributes
 			Cell* cell = new Cell();
-			cell->texture = textures[terrain[i][j]];
-			cell->isTerrain = terrain[i][j] == 0 ? false : true;
+			if(terrain[i][j] < 100)
+				cell->texture = currentLevel->textures[terrain[i][j]];
+			cell->isTerrain = terrain[i][j] > 0 && terrain[i][j] < 100 ? true : false;
 
 			cell->gridPos = glm::vec2(i, j);
 
@@ -55,15 +44,17 @@ void World::loadLevel(Level* level)
 			grid[i].push_back(cell);
 		}
 	}
+
+	spawnInitialObjects();
 }
 
 
 void World::run()
 {
-	destroy();
+	clear();
 	updateObjects();
 	checkForCollision();
-	clear();
+	destroy();
 }
 
 void World::destroy()
@@ -72,6 +63,23 @@ void World::destroy()
 	{
 		if (gameObjects[i]->shouldDie)
 		{
+			GameController::souls += gameObjects[i]->soulDrop;
+			if (gameObjects[i]->type == ALIEN_BOMB)
+			{
+				GameController::won = true;
+				GameController::running = false;
+				closeLevel();
+				return;
+			}
+				
+			else if (gameObjects[i]->type == PLAYER)
+			{
+				GameController::won = false;
+				GameController::running = false;
+				closeLevel();
+				return;
+			}
+			delete gameObjects[i];
 			gameObjects.erase(gameObjects.begin() + i);
 			--i;
 		}
@@ -110,6 +118,41 @@ void World::clear()
 			grid[i][j]->objects.clear();
 		}
 	}
+}
+
+void World::spawnInitialObjects()
+{
+	std::vector<std::vector<int>> terrain = currentLevel->terrain;
+
+	for (int i = 0; i < currentLevel->rowSize; i++)
+	{
+		for (int j = 0; j < currentLevel->colSize; j++)
+		{
+			glm::vec3 worldPos;
+			gridToWorldPos(i, j, &worldPos);
+
+			int val = terrain[i][j];
+
+			if (val == ENEMY)
+				Factory::spawnEnemyGameObject(worldPos, 1, 20, 5);
+			else if (val == GRAVITY_TANK)
+				Factory::spawnGravityTank(worldPos, 7);
+			else if (val == ALIEN_BOMB)
+				Factory::spawnAlienBomb(worldPos);
+			else if (val == TANK)
+				Factory::spawnTank(worldPos, 7);
+			else if (val == POWERUP)
+				Factory::spwnPowerup(worldPos);
+
+		}
+	}
+}
+
+void World::closeLevel()
+{
+	gameObjects.clear();
+	grid = std::vector<std::vector<Cell*>>();
+	currentLevel = NULL;
 }
 
 
@@ -258,6 +301,7 @@ bool World::outOfBounds(int i, int j)
 
 void World::render(Shader& shader)
 {
+	if (currentLevel == NULL) return;
 	shader.setUniform1f("isTile", 1.0f);
 
 	for (int i = 0; i < currentLevel->rowSize; i++)
@@ -294,5 +338,6 @@ void World::render(Shader& shader)
 	}
 
 	shader.setUniform1f("isTile", -1.0f);
-
+	Level*l = currentLevel;
+	currentLevel->background->render(shader);
 }
