@@ -17,6 +17,7 @@ EnemyGameObject::EnemyGameObject(glm::vec3& entityPos, std::vector<GLuint> entit
 	health = theHealth;
 	attackPow = ap;
 	sv.velocity = glm::vec3(0, 1, 0);
+	soulDrop = 5;
 
 	bulletTexture = entityTextures[1];
 
@@ -41,8 +42,9 @@ void EnemyGameObject::collide(int otherType, glm::vec3 normal, GameObject* other
 
 void EnemyGameObject::fire()
 {
-	Factory::spawnBulletGameObject(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture, numElements,
-		glm::normalize(glm::vec3(-1,0,0)), this->team, 10);
+	if (glm::distance(player->getPosition(), getPosition()) > 5) return;
+	Factory::spawnBulletGameObject(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture,
+		glm::normalize(glm::vec3(-1,0,0) * (float)xDirection), this->team, 10);
 
 	prevTime = glfwGetTime();
 }
@@ -60,6 +62,7 @@ void EnemyGameObject::update(double deltaTime) {
 	{
 		fire();
 	}
+	xDirection = glm::sign(getPosition().x - player->getPosition().x);
 
 	GameObject::update(deltaTime);
 }

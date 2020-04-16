@@ -9,6 +9,7 @@ Tank::Tank(glm::vec3& entityPos, std::vector<GLuint> entityTextures, GLint entit
 	team = ENEMIES;
 	xDirection = 1;
 	angle = 0.0f;
+	soulDrop = 20;
 
 	//firing
 	prevTime = 0.0f;
@@ -17,7 +18,8 @@ Tank::Tank(glm::vec3& entityPos, std::vector<GLuint> entityTextures, GLint entit
 
 void Tank::fire()
 {
-	Factory::spawnBulletGameObject(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture, numElements,
+	if (glm::distance(player->getPosition(), getPosition()) > 5) return;
+	Factory::spawnBulletGameObject(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture,
 		glm::normalize(player->getPosition() - getPosition()), this->team, 10);
 
 	prevTime = glfwGetTime();

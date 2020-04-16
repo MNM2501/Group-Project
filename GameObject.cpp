@@ -19,6 +19,7 @@ GameObject::GameObject(glm::vec3 &entityPosition, GLuint entityTexture, GLint en
 	shouldDie = false;
 	team = "";
 	sv.noGravity = true;
+	soulDrop = 0;
 
 	//health
 	health = 20;
