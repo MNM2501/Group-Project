@@ -1,0 +1,78 @@
+Store* store;
+GLuint tex[7];
+
+void setallTexture(void)
+{
+//	tex = new GLuint[4];
+	glGenTextures(7, tex);
+	setthisTexture(tex[0], "product1.png");
+	setthisTexture(tex[1], "product1soldout.png");
+	setthisTexture(tex[2], "product2.png");
+	setthisTexture(tex[3], "product2soldout.png");
+	setthisTexture(tex[4], "product3.png");
+	setthisTexture(tex[5], "product3soldout.png");
+	setthisTexture(tex[6], "storeInstructions.png");
+
+	glBindTexture(GL_TEXTURE_2D, tex[0]);
+}
+
+void setup(void)
+{
+
+	// Set up z-buffer for rendering
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
+
+	// Enable Alpha blending
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+
+	int size = 6;
+
+
+	// Set up the textures
+	setallTexture();
+
+	// Setup the player object (position, texture, vertex count)
+	// Note, player object should always be the first object in the game object vector 
+	Product* p1 = new Product(glm::vec3(0.0f, 2.0f, 0.0f), tex[0], tex[1], size);
+	Product* p2 = new Product(glm::vec3(0.0f, 0.0f, 0.0f), tex[2], tex[3], size);
+	Product* p3 = new Product(glm::vec3(0.0f, -2.0f, 0.0f), tex[4], tex[5], size);
+
+	// Setup other objects
+	
+	store = new Store(tex[6], size, p1, p2, p3);
+
+
+}
+
+void controls(void)
+{
+	// Checking for player input and making changes accordingly
+	if (glfwGetKey(Window::getWindow(), GLFW_KEY_1) == GLFW_PRESS) {
+		if (store->isNotSoldout(1)) {
+			store->buy(1);
+		}
+		else {
+			std::cout << "TOO BAD! \n";
+		}
+	}
+	else if (glfwGetKey(Window::getWindow(), GLFW_KEY_2) == GLFW_PRESS) {
+		if (store->isNotSoldout(2)) {
+			store->buy(2);
+		}
+		else {
+			std::cout << "TOO BAD! \n";
+		}
+	}
+	else if (glfwGetKey(Window::getWindow(), GLFW_KEY_3) == GLFW_PRESS) {
+		if (store->isNotSoldout(3)) {
+			store->buy(3);
+		}
+		else {
+			std::cout << "TOO BAD! \n";
+		}
+	}
+	
+}
