@@ -27,6 +27,9 @@ public:
 	static void spawnGravityTank(glm::vec3& entityPos, int ap);
 	static void spawnGravityBullet(glm::vec3& entityPos, GLuint texture, glm::vec3 direction, int damage, string team);
 	static void spawnAlienBomb(glm::vec3 &entityPosition);
+	static void spawnChaser(glm::vec3 position, std::vector<std::vector<int>> grid);
+	static void spawnKamikaze(glm::vec3 position);
+	static void spawnLavaTile(glm::vec3 position);
 
 private:
 	static int numElements;

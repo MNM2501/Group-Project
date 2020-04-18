@@ -10,6 +10,9 @@
 #define GRAVITY_TANK 106
 #define POWERUP 107
 #define ALIEN_BOMB 108
+#define CHASER 109
+#define KAMIKAZE 110
+#define LAVA 111
 
 //sides
 #define ALLIES "allies"

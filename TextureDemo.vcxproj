@@ -153,12 +153,14 @@
   <ItemGroup>
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="BulletGameObject.cpp" />
+    <ClCompile Include="ChaserGameObject.cpp" />
     <ClCompile Include="EnemyGameObject.cpp" />
     <ClCompile Include="Factory.cpp" />
     <ClCompile Include="GameController.cpp" />
     <ClCompile Include="GravityBullet.cpp" />
     <ClCompile Include="GravityTank.cpp" />
     <ClCompile Include="HealthBar.cpp" />
+    <ClCompile Include="KamikazeEnemy.cpp" />
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="PlayerGameObject.cpp" />
     <ClCompile Include="GameObject.cpp" />
@@ -177,12 +179,14 @@
   <ItemGroup>
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="BulletGameObject.h" />
+    <ClInclude Include="ChaserGameObject.h" />
     <ClInclude Include="EnemyGameObject.h" />
     <ClInclude Include="Factory.h" />
     <ClInclude Include="GameController.h" />
     <ClInclude Include="GravityBullet.h" />
     <ClInclude Include="GravityTank.h" />
     <ClInclude Include="HealthBar.h" />
+    <ClInclude Include="KamikazeEnemy.h" />
     <ClInclude Include="Level.h" />
     <ClInclude Include="ObjectTypes.h" />
     <ClInclude Include="PlayerGameObject.h" />

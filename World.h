@@ -53,14 +53,16 @@ public:
 	//All game objects in the world
 	static std::vector<GameObject*> gameObjects;
 
+	//convert grid pos to world pos
+	static void gridToWorldPos(int i, int j, glm::vec3* worldPos);
+
 
 private:
 	static GLint numElements;
 	static Level* currentLevel;
 	static std::vector<std::vector<Cell*>> grid;
 
-	//convert grid pos to world pos and vise versa
-	static void gridToWorldPos(int i, int j, glm::vec3* worldPos);
+	//convert world pos to grid pos
 	static bool worldToGridPos(glm::vec3, int&, int&);
 
 	static bool outOfBounds(int i, int j);

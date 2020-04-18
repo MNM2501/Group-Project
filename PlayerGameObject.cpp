@@ -34,6 +34,7 @@ PlayerGameObject::PlayerGameObject(glm::vec3 &entityPos, GLuint entityTexture, G
 	startTimePowerup = 0;
 	powerupDuration = 0;
 
+	futurePos = glm::vec3();
 
 }
 
@@ -44,11 +45,19 @@ void PlayerGameObject::fire()
 	canFire = false;
 }
 
+
 void PlayerGameObject::collide(int otherType, glm::vec3 normal, GameObject* otherGameObject)
 {
-	if (otherType == TERRAIN)
+	if (otherType == TERRAIN || otherType == LAVA)
 	{
+		if (otherType == LAVA)
+		{
+			cout << "LAVA" << endl;
+			receiveDmg(50);
+		}
 		sv.position += -sv.velocity * sv.deltaTime * speed * 1.1f;
+
+		
 		return;
 	}
 
@@ -61,6 +70,14 @@ void PlayerGameObject::receiveDmg(int dmg)
 {
 	if (GameController::immunePlayer) return;
 	GameObject::receiveDmg(dmg);
+}
+
+void PlayerGameObject::render(Shader& shader)
+{
+	shader.setUniform1f("isPlayer", 1.0f);
+	GameController::immunePlayer ? shader.setUniform1f("immune", 1.0f) : shader.setUniform1f("immune", -1.0f);
+	GameObject::render(shader);
+	shader.setUniform1f("isPlayer", -1.0f);
 }
 
 // Update function for moving the player object around
@@ -86,6 +103,7 @@ void PlayerGameObject::update(double deltaTime) {
 
 	// special player updates go here
 	sv.position += sv.velocity * (float)deltaTime * speed;
+	futurePos = sv.position + sv.velocity; // velocity is normalized so this is one unit away from the player along the velocity vector
 
 	//update our direction
 	if (sv.velocity.x != 0) xDirection = glm::sign(sv.velocity.x);

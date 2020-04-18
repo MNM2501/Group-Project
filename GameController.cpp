@@ -3,13 +3,13 @@
 
 
 //init
-string GameController::currentState = LEVEL_1;
+string GameController::currentState = HOME;
 
 bool GameController::running = true;
 bool GameController::won = false;
 std::vector<string> GameController::stateList = { HOME, LEVEL_1, END_LEVEL, SHOP, LEVEL_2, END_LEVEL, SHOP, LEVEL_3, END_LEVEL, END_GAME };
 
-int GameController::currentStateIndex = 1;
+int GameController::currentStateIndex = 0;
 
 
 //PLAYER STATS

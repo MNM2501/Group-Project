@@ -8,7 +8,11 @@
 #include "Bomb.h"
 #include "Powerup.h"
 #include "GravityTank.h"
-#include"GravityBullet.h"
+#include "GravityBullet.h"
+#include "ChaserGameObject.h"
+#include "KamikazeEnemy.h"
+
+
 
 PlayerGameObject* Factory::player = NULL;
 std::vector<GLuint> Factory::textures = std::vector<GLuint>();
@@ -84,5 +88,26 @@ void Factory::spawnAlienBomb(glm::vec3 &entityPosition)
 {
 	GameObject* g = new GameObject(entityPosition, textures[27], numElements);
 	g->type = ALIEN_BOMB;
+	World::gameObjects.push_back(g);
+}
+
+void Factory::spawnChaser(glm::vec3 position, std::vector<std::vector<int>> grid)
+{
+	ChaserGameObject* c = new ChaserGameObject(position, textures[45], numElements, grid);
+	World::gameObjects.push_back(c);
+}
+
+void Factory::spawnKamikaze(glm::vec3 position)
+{
+	std::vector<GLuint> kamikazesprites = { textures[8], textures[23] };
+
+	KamikazeEnemy* k = new KamikazeEnemy(position, kamikazesprites, numElements, player);
+	World::gameObjects.push_back(k);
+}
+
+void Factory::spawnLavaTile(glm::vec3 position)
+{
+	GameObject* g = new GameObject(position, textures[33], numElements);
+	g->type = LAVA;
 	World::gameObjects.push_back(g);
 }

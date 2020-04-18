@@ -10,6 +10,7 @@ GravityTank::GravityTank(glm::vec3& entityPos, std::vector<GLuint> entityTexture
 
 void GravityTank::fire()
 {
+	if (glm::distance(player->getPosition(), getPosition()) > 8) return;
 	Factory::spawnGravityBullet(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture,
 		glm::normalize(player->getPosition() - getPosition()), 10, team);
 

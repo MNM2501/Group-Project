@@ -18,7 +18,7 @@ Tank::Tank(glm::vec3& entityPos, std::vector<GLuint> entityTextures, GLint entit
 
 void Tank::fire()
 {
-	if (glm::distance(player->getPosition(), getPosition()) > 5) return;
+	if (glm::distance(player->getPosition(), getPosition()) > 8) return;
 	Factory::spawnBulletGameObject(getPosition() + glm::vec3(0, 0.0f, 0), bulletTexture,
 		glm::normalize(player->getPosition() - getPosition()), this->team, 10);
 

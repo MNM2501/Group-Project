@@ -32,8 +32,8 @@
 
 // Globals that define the OpenGL window and viewport
 const std::string window_title_g = "Group Project";
-const unsigned int window_width_g = 1200;
-const unsigned int window_height_g = 800;
+const unsigned int window_width_g = 1600;
+const unsigned int window_height_g = 1200;
 const glm::vec3 viewport_background_color_g(0.0, 0.0, 0.0);
 
 //Game state
@@ -49,7 +49,7 @@ HealthBar* health;
 UIElement* endLevelScreen;
 
 // Global texture info
-const int texSize = 45;
+const int texSize = 46;
 GLuint tex[texSize];
 
 //global background Object
@@ -175,10 +175,7 @@ void setallTexture(void)
 	setthisTexture(tex[42], "wingame.png");
 	setthisTexture(tex[43], "home.png");
 	setthisTexture(tex[44], "empty.png");
-
-
-
-
+	setthisTexture(tex[45], "chaserenemy.png");
 
 
 	for (int i = 0; i < texSize; i++)
@@ -201,6 +198,10 @@ void setup(void)
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	int size = 6;
+
+	// Set up the textures
+	setallTexture();
+
 	// Setup MainMenu background
 	mmBackground = new UIElement(glm::vec3(0, 0, 1), tex[4], size);
 	mmBackground->setScale(glm::vec3(8, 8, 1));
@@ -242,14 +243,11 @@ void setupEndScreens()
 
 }
 
+//setups up a level
 void setupLevel()
 {
 	int size = 6;
 	world = new World(size);
-
-	// Set up the textures
-	setallTexture();
-
 
 	//setup tile textures
 	std::vector<GLuint> tileTextures;
@@ -275,7 +273,7 @@ void setupLevel()
 
 
 		background = new UIElement(glm::vec3(0, 0, 2), tex[28], size);
-		world->loadLevel(new Level("level2.csv", tileTextures, glm::vec3(2, 8, 0), background));
+		world->loadLevel(new Level("level2.csv", tileTextures, glm::vec3(3, 8, 0), background));
 	}
 	if (state == LEVEL_3)
 	{
@@ -367,7 +365,7 @@ void controls(void)
 //handles main menu
 void mainmenu(Window &window, Shader &shader) {
 	bool clicked = false;
-	while (clicked == false) {
+	while (clicked == false && !glfwWindowShouldClose(window.getWindow())) {
 		window.clear(viewport_background_color_g);
 
 		double xpos, ypos;
@@ -392,10 +390,11 @@ void mainmenu(Window &window, Shader &shader) {
 		glfwPollEvents();
 		glfwSwapBuffers(window.getWindow());
 	}
+	GameController::running = false;
 
 }
 
-
+//runs a UI state - END LEVEL or END GAME
 void runUIState(Window& window, Shader& shader)
 {
 	// Clear background
@@ -414,22 +413,20 @@ void runUIState(Window& window, Shader& shader)
 	
 	else if (GameController::currentState == END_LEVEL || GameController::currentState == END_GAME)
 	{
+		setupEndScreens();
 		endLevelScreen->render(shader);
 
 		if (glfwGetKey(Window::getWindow(), GLFW_KEY_R)) 
 		{
 			GameController::running = false;
-			return;
-		}
-	}
+			if (GameController::currentState == END_GAME)
+			{
+				GameController::souls = 0;
+				GameController::canDropBombs = false;
+				GameController::canFireGravityBullet = false;
+				GameController::firingRateDoubled = false;
+			}
 
-	else if (GameController::currentState == HOME)
-	{
-		endLevelScreen->render(shader);
-
-		if (glfwGetKey(Window::getWindow(), GLFW_KEY_SPACE))
-		{
-			GameController::running = false;
 			return;
 		}
 	}
@@ -497,12 +494,11 @@ int main(void){
 		Shader shader("shader.vert", "shader.frag");
 		shader.enable();
 
+		setup();
+		setupStore();
+
 		while (!glfwWindowShouldClose(window.getWindow()))
 		{
-			setup();
-			setupStore();
-			setupEndScreens();
-
 			
 			if (GameController::currentState[0] == 'L')
 			{
@@ -526,24 +522,29 @@ int main(void){
 			{
 				cout << endl << endl;
 				cout << "*****************************************************************" << endl;
-				cout << "*                             SHOP                              *" << endl;
+				cout << "*                             SHOP                               *" << endl;
 				cout << "*****************************************************************" << endl << endl;
 				cout << "Welcome to the SHOP you have " << GameController::souls << " souls" << endl;
-				cout << "Double your firing rate for 50 souls" << endl;
-				cout << "Gain the ability to hit curve shots for 30 souls" << endl;
-				cout << "Gain the ability to drop bombs for 60 souls" << endl;
+
 				while (GameController::running && !glfwWindowShouldClose(window.getWindow()))
 				{
 					runUIState(window, shader);
 				}
 				GameController::updateState();
 			}
-			else if (GameController::currentState == END_LEVEL || GameController::currentState == END_GAME ||GameController::currentState == HOME)
+			else if (GameController::currentState == END_LEVEL || GameController::currentState == END_GAME)
 			{
-				cout << GameController::currentState << endl;
 				while (GameController::running && !glfwWindowShouldClose(window.getWindow()))
 				{
 					runUIState(window, shader);
+				}
+				GameController::updateState();
+			}
+			else if (GameController::currentState == HOME)
+			{
+				while (GameController::running && !glfwWindowShouldClose(window.getWindow()))
+				{
+					mainmenu(window, shader);
 				}
 				GameController::updateState();
 			}

@@ -72,7 +72,7 @@ void World::destroy()
 				return;
 			}
 				
-			else if (gameObjects[i]->type == PLAYER)
+			else if (gameObjects[i]->type == PLAYER || gameObjects[i]->type == CHASER)
 			{
 				GameController::won = false;
 				GameController::running = false;
@@ -143,6 +143,12 @@ void World::spawnInitialObjects()
 				Factory::spawnTank(worldPos, 7);
 			else if (val == POWERUP)
 				Factory::spwnPowerup(worldPos);
+			else if (val == CHASER)
+				Factory::spawnChaser(worldPos, currentLevel->terrain);
+			else if (val == KAMIKAZE)
+				Factory::spawnKamikaze(worldPos);
+			else if (val == LAVA)
+				Factory::spawnLavaTile(worldPos);
 
 		}
 	}

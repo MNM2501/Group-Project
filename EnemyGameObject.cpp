@@ -53,7 +53,10 @@ void EnemyGameObject::update(double deltaTime) {
 
 	// special player updates go here
 	if (sv.position.y > upYPos || sv.position.y < downYPos)
+	{
+		sv.position += glm::vec3(0, 0.05, 0) * -glm::sign(sv.velocity.y); //reduces chances of getting stuck
 		sv.velocity *= -1.0f;
+	}
 
 	sv.position += sv.velocity * (float)deltaTime * speed;
 
