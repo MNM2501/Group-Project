@@ -12,6 +12,10 @@ uniform float time;
 uniform float hurt;
 uniform float startTime;
 
+//player immunity
+uniform float immune;
+uniform float isPlayer;
+
 void main()
 {
 	vec4 color = texture2D(onetex, uv_interp);
@@ -26,6 +30,11 @@ void main()
 		float myTime = time - startTime;
 		vec4 red = vec4(1.0f, abs(cos(myTime * 8)), abs(cos(myTime * 8)), 1.0f);
 		FragColor  *= red;
+	}
+
+	if(isPlayer > 0 && immune > 0)
+	{
+		FragColor *= vec4(1,1,1,0.6f);
 	}
 
 //	 FragColor = color_interp;

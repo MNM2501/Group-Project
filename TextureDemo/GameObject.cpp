@@ -19,6 +19,7 @@ GameObject::GameObject(glm::vec3 &entityPosition, GLuint entityTexture, GLint en
 	shouldDie = false;
 	team = "";
 	sv.noGravity = true;
+	soulDrop = 0;
 
 	//health
 	health = 20;
@@ -62,6 +63,7 @@ void GameObject::collide(int otherType, glm::vec3 normal, GameObject* otherObjec
 
 void GameObject::receiveDmg(int dmg)
 {
+	if (type == LAVA) return; // stops lava from receiving damge (hotfix)
 	if (!canReceiveDmg) return;
 	canReceiveDmg = false;
 	shaderClockSet = false;

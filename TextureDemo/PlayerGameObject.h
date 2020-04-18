@@ -2,7 +2,6 @@
 
 #include "GameObject.h"
 #include "World.h"
-#include "BulletGameObject.h"
 #include "Powerup.h"
 
 // Inherits from GameObject
@@ -21,6 +20,7 @@ public:
 
 	virtual void receiveDmg(int dmg) override;
 
+	virtual void render(Shader& shader) override;
 
 	bool getCanFire() { return canFire; }
 
@@ -32,7 +32,7 @@ public:
 
 	float getHitBox() { return hitBox; }
 	float getFireCooldown() { return fireCooldown; }
-
+	glm::vec3 getFuturePos() { return futurePos; }
 
 private:
 	//powerup
@@ -45,6 +45,7 @@ private:
 	float fireCooldown;
 	float startFireCooldown;
 	bool canFire;
+	glm::vec3 futurePos;
 
 	
 

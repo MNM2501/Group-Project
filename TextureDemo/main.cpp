@@ -1,4 +1,5 @@
 #include <iostream>
+#include <fstream>
 #include <stdexcept>
 #include <string>
 #include <vector>
@@ -22,7 +23,8 @@
 #include "Tank.h"
 #include "Powerup.h";
 #include "GravityTank.h"
-
+#include "GameController.h"
+#include "Store.h"
 
 // Macro for printing exceptions
 #define PrintException(exception_object)\
@@ -44,9 +46,10 @@ GameObject* bomb;
 
 //Global UI elements
 HealthBar* health;
+UIElement* endLevelScreen;
 
 // Global texture info
-const int texSize = 27;
+const int texSize = 46;
 GLuint tex[texSize];
 
 //global background Object
@@ -55,6 +58,12 @@ UIElement* mmBackground;
 
 //World
 World* world;
+
+//Store
+Store* store;
+
+//for immunity toggle
+float prevToggle;
 
 
 // Create the geometry for a square (with two triangles)
@@ -148,18 +157,38 @@ void setallTexture(void)
 	setthisTexture(tex[24], "tank_bullet2.png");
 	setthisTexture(tex[25], "powerup.png");
 	setthisTexture(tex[26], "tank_grey.png");
+	setthisTexture(tex[27], "alienbomb.png");
+	setthisTexture(tex[28], "cavebackground.png");
+	setthisTexture(tex[29], "cavetiletop.png");
+	setthisTexture(tex[30], "cavetilebottom.png");
+	setthisTexture(tex[31], "tiletop.png");
+	setthisTexture(tex[32], "tilebottom.png");
+	setthisTexture(tex[33], "lava.png");
+	setthisTexture(tex[34], "product1.png");
+	setthisTexture(tex[35], "product1soldout.png");
+	setthisTexture(tex[36], "product2.png");
+	setthisTexture(tex[37], "product2soldout.png");
+	setthisTexture(tex[38], "product3.png");
+	setthisTexture(tex[39], "product3soldout.png");
+	setthisTexture(tex[40], "storeInstructions.png");
+	setthisTexture(tex[41], "gameover.png");
+	setthisTexture(tex[42], "wingame.png");
+	setthisTexture(tex[43], "home.png");
+	setthisTexture(tex[44], "empty.png");
+	setthisTexture(tex[45], "chaserenemy.png");
 
 
-
-
-
+	for (int i = 0; i < texSize; i++)
+		Factory::textures.push_back(tex[i]);
 
 	glBindTexture(GL_TEXTURE_2D, tex[0]);
 }
 
+
+
+
 void setup(void)
 {
-
 	// Set up z-buffer for rendering
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
@@ -168,46 +197,101 @@ void setup(void)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-
 	int size = 6;
-
 
 	// Set up the textures
 	setallTexture();
 
+	// Setup MainMenu background
+	mmBackground = new UIElement(glm::vec3(0, 0, 1), tex[4], size);
+	mmBackground->setScale(glm::vec3(8, 8, 1));
+	
+}
 
-	//setup terrain
+void setupStore()
+{
+	if (store != NULL) delete store;
+	store = NULL;
+	int size = 6;
 
-	std::vector<std::vector<int>> info = {
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,2,2,1,1,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,2,2,0,0,0,0,0,0,0,0,0,0,0,2,2,2,2,0,0,1,1,0,0,1,1,1},
-	{0,0,0,0,2,2,0,0,0,1,1,1,1,1,1,0,0,2,2,2,2,0,0,2,2,1,1,2,2,2},
-	{1,1,1,1,2,2,1,1,1,2,2,2,2,2,2,1,1,2,2,2,2,1,1,2,2,2,2,2,2,2},
-	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2},
-	{2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2}
-	};
+	Product* p1 = new Product(glm::vec3(0.0f, 2.0f, 0.0f), tex[34], tex[35], size, 50); // Double firing rate
+	Product* p2 = new Product(glm::vec3(0.0f, 0.0f, 0.0f), tex[36], tex[37], size, 30); // Curve shot
+	Product* p3 = new Product(glm::vec3(0.0f, -2.0f, 0.0f), tex[38], tex[39], size, 60); // Drop bombs
+
+	// Setup other objects
+
+	store = new Store(tex[40], size, p1, p2, p3);
+}
+
+void setupEndScreens()
+{
+	if (endLevelScreen != NULL) delete endLevelScreen;
+	endLevelScreen = NULL;
+	int size = 6;
+
+	if (GameController::currentState == END_LEVEL)
+		endLevelScreen = new UIElement(glm::vec3(0), tex[41], size);
+	else if (GameController::currentState == END_GAME)
+		endLevelScreen = new UIElement(glm::vec3(0), tex[42], size);
+	else if (GameController::currentState == HOME)
+		endLevelScreen = new UIElement(glm::vec3(0), tex[43], size);
+
+	if (endLevelScreen != NULL)
+		endLevelScreen->setScale(glm::vec3(8, 8, 1));
+
+	
+
+}
+
+//setups up a level
+void setupLevel()
+{
+	int size = 6;
+	world = new World(size);
 
 	//setup tile textures
 	std::vector<GLuint> tileTextures;
-	tileTextures.push_back(tex[0]); // add player sprite first just so indexs match up because 0 is meant to be nothing
-	tileTextures.push_back(tex[2]);
-	tileTextures.push_back(tex[3]);
+
 
 	//Setup our world
-	world = new World(tileTextures, size);
-	world->loadLevel(new Level(1, info));
+	string state = GameController::currentState;
+	if (state == LEVEL_1)
+	{
+		tileTextures.push_back(tex[0]); // add player sprite first just so indexs match up because 0 is meant to be nothing
+		tileTextures.push_back(tex[2]);
+		tileTextures.push_back(tex[3]);
+		tileTextures.push_back(tex[44]);
 
+		background = new UIElement(glm::vec3(0, 0, 2), tex[1], size);
+		world->loadLevel(new Level("level1.csv", tileTextures, glm::vec3(2, 1, 0), background));
+	}
+	if (state == LEVEL_2)
+	{
+		tileTextures.push_back(tex[0]); // add player sprite first just so indexs match up because 0 is meant to be nothing
+		tileTextures.push_back(tex[29]);
+		tileTextures.push_back(tex[30]);
+
+
+		background = new UIElement(glm::vec3(0, 0, 2), tex[28], size);
+		world->loadLevel(new Level("level2.csv", tileTextures, glm::vec3(3, 8, 0), background));
+	}
+	if (state == LEVEL_3)
+	{
+		tileTextures.push_back(tex[0]); // add player sprite first just so indexs match up because 0 is meant to be nothing
+		tileTextures.push_back(tex[31]);
+		tileTextures.push_back(tex[32]);
+		tileTextures.push_back(tex[33]);
+		tileTextures.push_back(tex[44]);
+		world->loadLevel(new Level("level3.csv", tileTextures, glm::vec3(1, -3, 0), background));
+	}
+
+
+	// Setup background scale
+	background->setScale(glm::vec3(8, 8, 1));
 
 	// Setup the player object (position, texture, vertex count)
 	// Note, player object should always be the first object in the game object vector 
-	player = new PlayerGameObject(glm::vec3(1.0f, 1.0f, 0.0f), tex[0], size);
-	world->gameObjects.push_back(player);
+	player = dynamic_cast<PlayerGameObject*>(World::gameObjects[0]);
 
 	//setup health ui element
 		//setup our vector of health bar sprites
@@ -217,30 +301,6 @@ void setup(void)
 
 	//health = new HealthBar(glm::vec3(-3.5f, 3.5f, 0.0f), healthTextures, size, player);
 	health = new HealthBar(glm::vec3(-3.5f, 3.5f, 0.0f), healthTextures, size, player);
-
-	//setup alien bomb
-	bomb = new GameObject(glm::vec3(29, 3, 0), tex[9], size);
-	world->gameObjects.push_back(bomb);
-
-	// Setup background
-	background = new UIElement(glm::vec3(0, 0, 2), tex[1], size);
-	background->setScale(glm::vec3(8, 8, 1));
-
-	// Setup MainMenu background
-	mmBackground = new UIElement(glm::vec3(0, 0, 1), tex[4], size);
-	mmBackground->setScale(glm::vec3(8, 8, 1));
-
-	//setup tank sprites
-	std::vector<GLuint> tankSprites = { tex[26], tex[23], tex[22] };
-	std::vector<GLuint> enemySprites = { tex[7], tex[23]};
-	std::vector<GLuint> enemySprites2 = { tex[8], tex[23] };
-
-
-	//Setup enemies
-	Factory::spawnGravityTank(glm::vec3(3.0f, 1.0f, 0.0f), tankSprites, size, 10, player);
-	Factory::spwnPowerup(glm::vec3(3.0f, 2.0f, 0.0f), tex[25], size);
-	Factory::spawnEnemyGameObject(glm::vec3(8.0f, 5.0f, 0.0f), enemySprites, size, 1.2, 30, 1, player);
-	Factory::spawnEnemyGameObject(glm::vec3(22.0f, 5.0f, 0.0f), enemySprites2, size, 1.2, 3, 1, player);
 
 }
 
@@ -274,14 +334,25 @@ void controls(void)
 
 	if (glfwGetKey(Window::getWindow(), GLFW_KEY_F) == GLFW_PRESS && player->getCanFire()) {
 		glm::vec3 direction = glm::vec3(1, 0, 0) * (float)player->getxDirect();
-		Factory::spawnBulletGameObject(player->getPosition(), tex[9], 6, direction, player->team, player->damage);
+		Factory::spawnBulletGameObject(player->getPosition(), tex[9], direction, player->team, player->damage);
 		player->fire();
 	}
 
-	if (glfwGetKey(Window::getWindow(), GLFW_KEY_SPACE) == GLFW_PRESS && player->getCanFire()) {
+	if (glfwGetKey(Window::getWindow(), GLFW_KEY_SPACE) == GLFW_PRESS && player->getCanFire() && GameController::canDropBombs) {
 		glm::vec3 direction = glm::vec3(1, 0, 0) * (float)player->getxDirect();
-		Factory::spawnBomb(player->getPosition(), tex[24], 6, player->damage, player->team);
+		Factory::spawnBomb(player->getPosition(), player->damage, player->team);
 		player->fire();
+	}
+
+	if (glfwGetKey(Window::getWindow(), GLFW_KEY_R) == GLFW_PRESS && player->getCanFire() && GameController::canFireGravityBullet) {
+		glm::vec3 direction = glm::normalize(glm::vec3(1 * (float)player->getxDirect(), 1, 0));
+		Factory::spawnGravityBullet(player->getPosition(), tex[9], direction, player->damage * 2, player->team);
+		player->fire();
+	}
+
+	if (glfwGetKey(Window::getWindow(), GLFW_KEY_I) == GLFW_PRESS  && prevToggle + 0.5 < glfwGetTime()) {
+		prevToggle = glfwGetTime();
+		GameController::immunePlayer = !GameController::immunePlayer;
 	}
 
 	if(!buttonPressed)
@@ -294,7 +365,7 @@ void controls(void)
 //handles main menu
 void mainmenu(Window &window, Shader &shader) {
 	bool clicked = false;
-	while (clicked == false) {
+	while (clicked == false && !glfwWindowShouldClose(window.getWindow())) {
 		window.clear(viewport_background_color_g);
 
 		double xpos, ypos;
@@ -312,17 +383,61 @@ void mainmenu(Window &window, Shader &shader) {
 				clicked = true;
 			}
 		}
-
-
+		
 		startButton->render(shader);
 		mmBackground->render(shader);
 
 		glfwPollEvents();
 		glfwSwapBuffers(window.getWindow());
 	}
+	GameController::running = false;
 
 }
 
+//runs a UI state - END LEVEL or END GAME
+void runUIState(Window& window, Shader& shader)
+{
+	// Clear background
+	window.clear(viewport_background_color_g);
+
+	// set view to zoom out, centred by default at 0,0
+	float cameraZoom = 0.25f;
+	glm::mat4 viewMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(cameraZoom, cameraZoom, cameraZoom));
+	shader.setUniformMat4("viewMatrix", viewMatrix);
+
+	if (GameController::currentState == SHOP)
+	{
+		store->update();
+		store->render(shader);
+	}
+	
+	else if (GameController::currentState == END_LEVEL || GameController::currentState == END_GAME)
+	{
+		setupEndScreens();
+		endLevelScreen->render(shader);
+
+		if (glfwGetKey(Window::getWindow(), GLFW_KEY_R)) 
+		{
+			GameController::running = false;
+			if (GameController::currentState == END_GAME)
+			{
+				GameController::souls = 0;
+				GameController::canDropBombs = false;
+				GameController::canFireGravityBullet = false;
+				GameController::firingRateDoubled = false;
+			}
+
+			return;
+		}
+	}
+
+	// Update other events like input handling
+	glfwPollEvents();
+
+	// Push buffer drawn in the background onto the display
+	glfwSwapBuffers(window.getWindow());
+
+}
 
 void gameLoop(Window &window, Shader &shader, double deltaTime)
 {
@@ -330,6 +445,11 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 	window.clear(viewport_background_color_g);
 
 	// set view to zoom out, centred by default at 0,0
+
+	//render UIelements
+	health->render(shader);
+
+
 	float cameraZoom = 0.25f;
 	glm::mat4 centerPlayer = glm::translate(glm::mat4(1.0f), glm::vec3(-player->getPosition().x, -player->getPosition().y, 0));
 	glm::mat4 viewMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(cameraZoom, cameraZoom, cameraZoom)) * centerPlayer;
@@ -358,13 +478,6 @@ void gameLoop(Window &window, Shader &shader, double deltaTime)
 	world->run();
 	world->render(shader);
 
-	//render UIelements
-	health->render(shader);
-	background->render(shader);
-	//glm::mat4 UIMatrix = glm::scale(glm::mat4(1.0f), glm::vec3(0.25, 0.25, 0.25));
-	//shader.setUniformMat4("viewMatrix", UIMatrix);
-	
-
 	// Update other events like input handling
 	glfwPollEvents();
 
@@ -382,20 +495,62 @@ int main(void){
 		shader.enable();
 
 		setup();
-		//mainmenu(window, shader);
+		
 
+		while (!glfwWindowShouldClose(window.getWindow()))
+		{
+			setupStore();
+			if (GameController::currentState[0] == 'L')
+			{
+				setupLevel();
+				// Run the main loop
+				double lastTime = glfwGetTime();
+				while (GameController::running && !glfwWindowShouldClose(window.getWindow())) {
 
-		// Run the main loop
-		double lastTime = glfwGetTime();
-		while (!glfwWindowShouldClose(window.getWindow()) && !GAMEOVER) {
+					// Calculate delta time
+					double currentTime = glfwGetTime();
+					double deltaTime = currentTime - lastTime;
+					lastTime = currentTime;
+
+					gameLoop(window, shader, deltaTime);
+				}
+
+				GameController::updateState();
+			}
+
+			else if (GameController::currentState == SHOP)
+			{
+				cout << endl << endl;
+				cout << "*****************************************************************" << endl;
+				cout << "*                             SHOP                               *" << endl;
+				cout << "*****************************************************************" << endl << endl;
+				cout << "Welcome to the SHOP you have " << GameController::souls << " souls" << endl;
+
+				while (GameController::running && !glfwWindowShouldClose(window.getWindow()))
+				{
+					runUIState(window, shader);
+				}
+				GameController::updateState();
+			}
+			else if (GameController::currentState == END_LEVEL || GameController::currentState == END_GAME)
+			{
+				while (GameController::running && !glfwWindowShouldClose(window.getWindow()))
+				{
+					runUIState(window, shader);
+				}
+				GameController::updateState();
+			}
+			else if (GameController::currentState == HOME)
+			{
+				while (GameController::running && !glfwWindowShouldClose(window.getWindow()))
+				{
+					mainmenu(window, shader);
+				}
+				GameController::updateState();
+			}
 			
-			// Calculate delta time
-			double currentTime = glfwGetTime();
-			double deltaTime = currentTime - lastTime;
-			lastTime = currentTime;
-
-			gameLoop(window, shader, deltaTime);
 		}
+		
 	}
 	catch (std::exception &e){
 		// print exception and sleep so error can be read

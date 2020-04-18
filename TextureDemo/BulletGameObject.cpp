@@ -27,9 +27,7 @@ void BulletGameObject::update(double deltaTime) {
 
 	//determine angle
 	glm::vec3 direction = glm::normalize(sv.velocity);
-	angle = acos(glm::dot(direction, glm::vec3(1.0f, 0.0f, 0.0f)));
-	//cout << angle << endl;
-
+	angle = atan2(direction.y, direction.x);
 	//update our direction
 	if (sv.velocity.x != 0) xDirection = glm::sign(sv.velocity.x);
 }

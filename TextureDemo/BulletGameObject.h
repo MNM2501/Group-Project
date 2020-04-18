@@ -1,6 +1,5 @@
 #pragma once
 #include "GameObject.h"
-#include "PlayerGameObject.h"
 
 class BulletGameObject :
 	public GameObject
